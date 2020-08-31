@@ -24,7 +24,7 @@ public class TokenFilter implements Filter {
     @Autowired
     private FilterMapper filterMapper;
     private static final Set<String> ALLOWED_PATHS = Collections.unmodifiableSet(new HashSet<>(
-                Arrays.asList("/login/login","/login/userRegister","/test/getAll")
+                Arrays.asList("/login/login","/login/userRegister","/test/getAll","/timmer/insertStock","/timmer/getDailyRecord")
             )
     );
     @Override
