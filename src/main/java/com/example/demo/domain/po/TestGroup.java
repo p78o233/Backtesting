@@ -89,4 +89,7 @@ public class TestGroup {
         this.modifyTime = modifyTime;
         this.isdel = isdel;
     }
+
+    public TestGroup() {
+    }
 }

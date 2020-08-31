@@ -8,7 +8,18 @@ public class R {
     private int state;
     private Object data;
     private String message;
-
+//    操作正常
+    public static int REQUEST_SUCCESS = 200;
+//    账号不存在
+    public static int ACCOUNT_NOT_EXIST = 301;
+//    账号密码错误
+    public static int ACCOUNT_PWD_ERROR = 302;
+//    注册时密码和确认密码不一致
+    public static int ACCOUNT_PWD_EQUALS = 303;
+//    注册失败
+    public static int USER_REGISTER_FAIL = 304;
+//    操作失败
+    public static int REQUEST_FAIL = 500;
     public R() {
     }
 
