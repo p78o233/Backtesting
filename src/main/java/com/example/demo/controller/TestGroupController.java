@@ -26,7 +26,7 @@ public class TestGroupController {
     public R ioeTestGroup(@RequestBody TestGroup testGroup){
         int result = testGroupService.ioeTestGroup(testGroup);
         if(result == -1){
-            return new R (false,R.USER_REGISTER_FAIL,null,"回测分组不能重名");
+            return new R (false,R.REQUEST_FAIL,null,"回测分组不能重名");
         }else if(result == 1){
             return new R (true,R.REQUEST_SUCCESS,null,"操作成功");
         }else {

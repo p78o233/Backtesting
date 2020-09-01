@@ -26,18 +26,22 @@ public class TestGroupServiceImpl implements TestGroupService {
 
     @Override
     public int ioeTestGroup(TestGroup testGroup) {
-//        检查是否有重名的回测分组
-        if(testGroupMapper.checkGroupNameExist(testGroup.getGroupName(),testGroup.getUserId())>0){
-            return -1;
-        }
         if(testGroup.getId() == null){
 //            新增
+            //        检查是否有重名的回测分组
+            if(testGroupMapper.checkGroupNameExist(testGroup.getGroupName(),testGroup.getUserId())>0){
+                return -1;
+            }
             testGroup.setCreateTime(new Date());
             if(testGroupMapper.insertTestGroup(testGroup)>0)
                 return 1;
             return 0;
         }else{
 //            修改
+            //        检查是否有重名的回测分组
+            if(testGroupMapper.checkGroupNameExistEdit(testGroup.getGroupName(),testGroup.getUserId(),testGroup.getId())>0){
+                return -1;
+            }
             testGroup.setModifyTime(new Date());
             if(testGroupMapper.updateTestGroup(testGroup)>0)
                 return 1;
