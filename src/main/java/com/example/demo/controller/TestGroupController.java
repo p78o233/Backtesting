@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2020/9/1
  */
 @RestController
-@RequestMapping(value = "/testGroup")
+@RequestMapping(value = "/stock/testGroup")
 public class TestGroupController {
     @Autowired
     private TestGroupService testGroupService;

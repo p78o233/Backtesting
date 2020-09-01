@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/8/31
  */
 @RestController
-@RequestMapping(value = "/timmer")
+@RequestMapping(value = "/stock/timmer")
 public class TimmerController {
     @Autowired
     private TimerService timerService;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2020/8/31
  */
 @RestController
-@RequestMapping(value = "/login")
+@RequestMapping(value = "/stock")
 public class LoginController {
     @Autowired
     private LoginService loginService;
