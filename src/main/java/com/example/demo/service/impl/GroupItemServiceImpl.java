@@ -201,7 +201,7 @@ public class GroupItemServiceImpl implements GroupItemService {
             GroupItem item = new GroupItem();
             item.setBuyPrice(getStockHistoryPrice(dto.getBeginTime(),groupItemMapper.getSymbolByItemId(dto.getItemIds().get(i))));
             item.setBuyTime(dto.getBeginTime());
-            item.setId(item.getId());
+            item.setId(dto.getItemIds().get(i));
             groupItemMapper.batchEditBeginTimeGroupItem(item);
         }
         return 1;
@@ -222,6 +222,7 @@ public class GroupItemServiceImpl implements GroupItemService {
             item.setBuyNum(dto.getBuyNum());
             item.setBuyPrice(getStockHistoryPrice(dto.getBuyTime(),dto.getSymbol().get(i)));
             item.setSname(groupItemMapper.getSnameSymbol(dto.getSymbol().get(i)));
+            item.setSymbol(dto.getSymbol().get(i));
             item.setGroupId(dto.getGroupId());
             item.setUserId(dto.getUserId());
             item.setEndTime(dto.getEndTime());

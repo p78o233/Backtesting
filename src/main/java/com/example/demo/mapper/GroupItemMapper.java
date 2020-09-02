@@ -19,7 +19,7 @@ public interface GroupItemMapper {
     @Select("select * from groupitem where id = #{id} and isdel = 0")
     GroupItem getGroupItemDetail(@Param("id")int id);
 //    根据股票编号模糊查询
-    @Select("select * from stock where isdel = 0 and symbol like '%${symbol}%' order by id asc limit 0 , 20")
+    @Select("select * from stock where symbol like '%${symbol}%' order by id asc limit 0 , 20")
     List<Stock> getStockSearch (@Param("symbol")String symbol);
 
 //    新增修改
@@ -47,7 +47,7 @@ public interface GroupItemMapper {
     int batchEditBeginTimeGroupItem(@Param("g")GroupItem groupItem);
 
     @Update("<script>" +"update groupitem set endTime = #{endTime} "+
-            " and id in "+
+            " where id in "+
             "<foreach collection='ids' item='id' open='(' separator=',' close=')'>"+
             "#{id}"+
             "</foreach>"+
