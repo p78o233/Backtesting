@@ -93,22 +93,12 @@ public class TestGroupController {
 
     @PostMapping(value = "/batchEditBeginTimeGroupItem")
     public R batchEditBeginTimeGroupItem(@RequestBody BatchGroupItemEditDto dto){
-        int result = groupItemService.batchEditBeginTimeGroupItem(dto);
-        if(result == 1){
-            return new R (true,R.REQUEST_SUCCESS,null,"操作成功");
-        }else{
-            return new R (false,R.REQUEST_FAIL,null,"操作失败");
-        }
+        return groupItemService.batchEditBeginTimeGroupItem(dto);
     }
 
     @PostMapping(value = "/batchEditEndTimeGroupItem")
     public R batchEditEndTimeGroupItem(@RequestBody BatchGroupItemEditDto dto){
-        int result = groupItemService.batchEditEndTimeGroupItem(dto);
-        if(result == 1){
-            return new R (true,R.REQUEST_SUCCESS,null,"操作成功");
-        }else{
-            return new R (false,R.REQUEST_FAIL,null,"操作失败");
-        }
+        return groupItemService.batchEditEndTimeGroupItem(dto);
     }
 
     @PostMapping(value = "/batchInsertGroupItem")

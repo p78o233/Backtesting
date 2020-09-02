@@ -53,4 +53,11 @@ public interface GroupItemMapper {
             "</foreach>"+
             "</script>")
     int batchEditEndTimeGroupItem(@Param("endTime") long endTime,@Param("ids")List<Integer> ids);
+
+//    检查买入时间是否大于卖出时间
+    @Select("select count(*) from groupitem where endTime < #{buyTime} and endTime != 0 and isdel = 0 and id = #{id}")
+    int countBuyBiggerEnd(@Param("buyTime")long buyTime,@Param("id")int id);
+//    检查卖出时间是否小于买入时间
+    @Select("select count(*) from groupitem where #{endTime} < buyTime and isdel = 0 and id = #{id}")
+    int countEndSmallerBuy(@Param("endTime")long endTime,@Param("id")int id);
 }

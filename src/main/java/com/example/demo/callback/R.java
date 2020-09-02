@@ -10,6 +10,8 @@ public class R {
     private String message;
 //    操作正常
     public static int REQUEST_SUCCESS = 200;
+//    部分数据操作失败
+    public static int SOME_ERROR = 201;
 //    账号不存在
     public static int ACCOUNT_NOT_EXIST = 301;
 //    账号密码错误

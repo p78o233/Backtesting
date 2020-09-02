@@ -5,6 +5,7 @@ package com.example.demo.service.impl;
  */
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.callback.R;
 import com.example.demo.domain.dto.BatchGroupItemEditDto;
 import com.example.demo.domain.dto.BatchInsertGroupItemDto;
 import com.example.demo.domain.po.GroupItem;
@@ -196,22 +197,46 @@ public class GroupItemServiceImpl implements GroupItemService {
     }
 
     @Override
-    public int batchEditBeginTimeGroupItem(BatchGroupItemEditDto dto) {
+    public R batchEditBeginTimeGroupItem(BatchGroupItemEditDto dto) {
+        List<Integer> list = new ArrayList<>();
         for(int i = 0; i < dto.getItemIds().size() ;i++){
             GroupItem item = new GroupItem();
             item.setBuyPrice(getStockHistoryPrice(dto.getBeginTime(),groupItemMapper.getSymbolByItemId(dto.getItemIds().get(i))));
             item.setBuyTime(dto.getBeginTime());
             item.setId(dto.getItemIds().get(i));
-            groupItemMapper.batchEditBeginTimeGroupItem(item);
+            if(groupItemMapper.countBuyBiggerEnd(dto.getBeginTime(),dto.getItemIds().get(i))>0){
+                list.add(dto.getItemIds().get(i));
+            }else {
+                groupItemMapper.batchEditBeginTimeGroupItem(item);
+            }
         }
-        return 1;
+        if(list.size()>0){
+            return new R(true,R.SOME_ERROR,list,"起始时间不能大于结束时间");
+        }else{
+            return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
+        }
     }
 
     @Override
-    public int batchEditEndTimeGroupItem(BatchGroupItemEditDto dto) {
-        if(groupItemMapper.batchEditEndTimeGroupItem(dto.getEndTime(),dto.getItemIds())>0)
-            return 1;
-        return 0;
+    public R batchEditEndTimeGroupItem(BatchGroupItemEditDto dto) {
+        if(dto.getEndTime() == 0) {
+//            无时间限制
+            if (groupItemMapper.batchEditEndTimeGroupItem(dto.getEndTime(), dto.getItemIds()) > 0)
+                return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
+            return new R(true,R.REQUEST_FAIL,null,"操作失败");
+        }else{
+//            有时间限制
+            List<Integer> list = new ArrayList<>();
+            for(int i = 0;i<dto.getItemIds().size();i++)
+            if(groupItemMapper.countEndSmallerBuy(dto.getEndTime(),dto.getItemIds().get(i))>0){
+                list.add(dto.getItemIds().get(i));
+            }
+            if(list.size()>0){
+                return new R(true,R.SOME_ERROR,list,"结束时间不能早于开始时间");
+            }else{
+                return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
+            }
+        }
     }
 
     @Override

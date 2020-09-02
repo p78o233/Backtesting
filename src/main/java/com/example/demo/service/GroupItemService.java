@@ -5,6 +5,7 @@ package com.example.demo.service;
  */
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.callback.R;
 import com.example.demo.domain.dto.BatchGroupItemEditDto;
 import com.example.demo.domain.dto.BatchInsertGroupItemDto;
 import com.example.demo.domain.po.GroupItem;
@@ -27,9 +28,9 @@ public interface GroupItemService {
 //    批量删除回测分组内数据
     public int batchDeleteGroupItem(BatchGroupItemEditDto dto);
 //    批量修改回测分组内开始时间
-    public int batchEditBeginTimeGroupItem(BatchGroupItemEditDto dto);
+    public R batchEditBeginTimeGroupItem(BatchGroupItemEditDto dto);
 //    批量修改回测分组内结束时间
-    public int batchEditEndTimeGroupItem(BatchGroupItemEditDto dto);
+    public R batchEditEndTimeGroupItem(BatchGroupItemEditDto dto);
 //    批量新增回测分组内数据
     public int batchInsertGroupItem(BatchInsertGroupItemDto dto);
 }
