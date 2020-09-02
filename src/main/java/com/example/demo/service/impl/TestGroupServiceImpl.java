@@ -51,8 +51,10 @@ public class TestGroupServiceImpl implements TestGroupService {
 
     @Override
     public int batchDeleteTestGroup(BatchDeleteTestGroup dto) {
-        if(testGroupMapper.batchDeleteTestGroup(dto.getUserId(),dto.getIds())>0)
+        if(testGroupMapper.batchDeleteTestGroup(dto.getUserId(),dto.getIds())>0) {
+            testGroupMapper.batchDeleteAllGroupItem(dto.getUserId(),dto.getIds());
             return 1;
+        }
         return 0;
     }
 }

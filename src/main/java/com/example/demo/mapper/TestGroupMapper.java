@@ -38,4 +38,11 @@ public interface TestGroupMapper {
             "</foreach>"+
             "</script>")
     int batchDeleteTestGroup(@Param("userId")int userId,@Param("ids")List<Integer> ids);
+    @Update("<script>" +"update groupitem set isdel = 1 and userId = #{userId}"+
+            " and groupId in "+
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>"+
+            "#{id}"+
+            "</foreach>"+
+            "</script>")
+    int batchDeleteAllGroupItem(@Param("userId")int userId,@Param("ids")List<Integer> ids);
 }
