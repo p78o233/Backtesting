@@ -17,11 +17,15 @@ public class config {
     public FilterRegistrationBean tokenFilter() {
         FilterRegistrationBean registration = new FilterRegistrationBean();
         registration.setFilter(kevinTokenFilter());
-        registration.addUrlPatterns("/shares/stock/*");
-//        registration.addInitParameter("exclusions","/shares/stock/login,");
+        registration.addUrlPatterns("/stock/*");
+        registration.addInitParameter("exclusions","/static/**,");
 //    	registration.addInitParameter("", "");
         registration.setName("tokenFilter");
 
         return registration;
     }
+
+
+
+
 }

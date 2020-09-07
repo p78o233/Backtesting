@@ -38,6 +38,9 @@ public class TokenFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String path = request.getRequestURI().substring(request.getContextPath().length()).replaceAll("[/]+$", "");
+        if(!path.split("/")[1].equals("stock")){
+            filterChain.doFilter(request, response);
+        }
         boolean allowedPath = ALLOWED_PATHS.contains(path);
         if (request.getMethod().equals(RequestMethod.OPTIONS.name())) {
 //            如果是options请求则不进行那些校验，这一步一定需要，不然就请求一直不通过

@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableAutoConfiguration
 @EnableScheduling
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 @MapperScan("com.example.demo.mapper")
 public class DemoApplication {
 
