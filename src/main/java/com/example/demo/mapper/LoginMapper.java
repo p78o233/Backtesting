@@ -1,8 +1,11 @@
 package com.example.demo.mapper;
 
+import com.example.demo.domain.po.Stock;
 import com.example.demo.domain.po.TestGroup;
 import com.example.demo.domain.po.User;
 import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 /*
  * @author p78o2
@@ -26,6 +29,10 @@ public interface LoginMapper {
     @Insert("insert into user (account,pwd,createTime) values (#{u.account},#{u.pwd},#{u.createTime})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     void userRegister(@Param("u")User user);
-    @Insert("insert into testgroup (userId,groupName,createTime) values (#{t.userId},#{t.groupName},#{t.createTime})")
-    int insertTestGroup(@Param("t")TestGroup testGroup);
+    @Insert("insert into testgroup (userId,groupName,createTime,isdefault) values (#{t.userId},#{t.groupName},#{t.createTime},#{t.isdefault})")
+    @Options(useGeneratedKeys = true,keyProperty = "id")
+    void insertTestGroup(@Param("t")TestGroup testGroup);
+
+    @Select("select * from stock")
+    List<Stock> getAllStock();
 }

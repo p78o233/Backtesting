@@ -20,6 +20,8 @@ public class TestGroup {
     private Date modifyTime;
     //    是否删除 0 正常 1 删除
     private int isdel;
+//    是否默认分组1是 0不是
+    private int isdefault;
 
     @Override
     public String toString() {
@@ -30,6 +32,7 @@ public class TestGroup {
                 ", createTime=" + createTime +
                 ", modifyTime=" + modifyTime +
                 ", isdel=" + isdel +
+                ", isdefault=" + isdefault +
                 '}';
     }
 
@@ -81,13 +84,22 @@ public class TestGroup {
         this.isdel = isdel;
     }
 
-    public TestGroup(Integer id, int userId, String groupName, Date createTime, Date modifyTime, int isdel) {
+    public int getIsdefault() {
+        return isdefault;
+    }
+
+    public void setIsdefault(int isdefault) {
+        this.isdefault = isdefault;
+    }
+
+    public TestGroup(Integer id, int userId, String groupName, Date createTime, Date modifyTime, int isdel, int isdefault) {
         this.id = id;
         this.userId = userId;
         this.groupName = groupName;
         this.createTime = createTime;
         this.modifyTime = modifyTime;
         this.isdel = isdel;
+        this.isdefault = isdefault;
     }
 
     public TestGroup() {
