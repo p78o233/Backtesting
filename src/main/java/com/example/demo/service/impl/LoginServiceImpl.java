@@ -4,6 +4,7 @@ import com.example.demo.callback.R;
 import com.example.demo.domain.dto.UserRegisterDto;
 import com.example.demo.domain.po.TestGroup;
 import com.example.demo.domain.po.User;
+import com.example.demo.domain.vo.LoginVo;
 import com.example.demo.mapper.LoginMapper;
 import com.example.demo.service.LoginService;
 import com.example.demo.utils.ToolsUtils;
@@ -31,7 +32,8 @@ public class LoginServiceImpl implements LoginService {
                 String token = ToolsUtils.stringToMD5(user.getAccount()+String.valueOf(new Date())+user.getPwd());
                 int result = loginMapper.updateToken(loginUser.getId(),token);
                 if(result > 0){
-                    return new R (true,R.REQUEST_SUCCESS,token,"登陆成功");
+                    LoginVo vo = new LoginVo(loginUser.getId(),token);
+                    return new R (true,R.REQUEST_SUCCESS,vo,"登陆成功");
                 }else {
                     return new R(false,R.REQUEST_FAIL,null,"操作失败");
                 }
