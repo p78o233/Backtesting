@@ -50,6 +50,9 @@ public class LoginServiceImpl implements LoginService {
 //            密码与确认密码不一致
             return 0;
         }else{
+//            检查账号是否重复
+            if(loginMapper.checkRegister(dto.getAccount())>0)
+                return -2;
             User user = new User();
             user.setAccount(dto.getAccount());
             user.setPwd(ToolsUtils.stringToMD5(dto.getPwd()));

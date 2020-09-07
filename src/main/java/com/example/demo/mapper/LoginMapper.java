@@ -18,6 +18,10 @@ public interface LoginMapper {
     @Update("update user set token = #{token} where id = #{id}")
     int updateToken(@Param("id")int id,@Param("token")String token);
 
+//    检查账号是否重复
+    @Select("select count(*) from user where account = #{account} and isdel = 0")
+    int checkRegister(@Param("account")String account);
+
 //    注册
     @Insert("insert into user (account,pwd,createTime) values (#{u.account},#{u.pwd},#{u.createTime})")
     @Options(useGeneratedKeys = true,keyProperty = "id")

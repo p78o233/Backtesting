@@ -32,7 +32,10 @@ public class LoginController {
             return new R(false,R.ACCOUNT_PWD_EQUALS,null,"密码与确认密码不一致");
         }else if(result == -1){
             return new R(false,R.USER_REGISTER_FAIL,null,"用户创建失败");
-        }else {
+        } else if(result == -2){
+            return new R(false,R.USER_REGISTER_FAIL,null,"账号重复，创建失败");
+        }
+        else {
             return new R(true,R.REQUEST_SUCCESS,null,"用户创建成功");
         }
     }
