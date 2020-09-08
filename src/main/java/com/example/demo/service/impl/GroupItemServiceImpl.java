@@ -218,7 +218,7 @@ public class GroupItemServiceImpl implements GroupItemService {
                 }
             }
             if(list.size()>0){
-                return new R(true,R.SOME_ERROR,list,"起始时间不能大于结束时间");
+                return new R(true,R.SOME_ERROR,list,"起始时间不能小于股票记录初始时间");
             }else{
                 return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
             }
@@ -245,6 +245,26 @@ public class GroupItemServiceImpl implements GroupItemService {
 
     @Override
     public R batchEditEndTimeGroupItem(BatchGroupItemEditDto dto) {
+        //        检查这个分组是否默认分组
+        if(groupItemMapper.getIsDefault(dto.getGroupId()) == 1){
+//            默认分组
+            List<Integer> list = new ArrayList<>();
+//            检查每一个的item里面的id的每个回测日期都大于创建的日期
+            for(Integer index : dto.getItemIds()){
+//                获取每个股票的创建时间
+                Date beginTime = groupItemMapper.getStockBySymbol(index);
+                if(dto.getEndTime()<beginTime.getTime()){
+//                    回测时间比创建时间早
+                    list.add(index);
+                }
+            }
+            if(list.size()>0){
+                return new R(true,R.SOME_ERROR,list,"结束时间不能小于股票记录初始时间");
+            }else{
+                return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
+            }
+        }
+
         if(dto.getEndTime() == 0) {
 //            无时间限制
             if (groupItemMapper.batchEditEndTimeGroupItem(dto.getEndTime(), dto.getItemIds()) > 0)
