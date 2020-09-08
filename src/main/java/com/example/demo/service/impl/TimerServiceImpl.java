@@ -12,6 +12,7 @@ import com.example.demo.service.TimerService;
 import com.example.demo.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,7 +25,8 @@ public class TimerServiceImpl implements TimerService {
     private String key;
     @Value("${testSign}")
     private String sign;
-
+    @Autowired
+    private AsyncTack asyncTack;
     @Override
     public void insertStock() {
         HashMap<String, String> params = new HashMap<>();
@@ -38,10 +40,22 @@ public class TimerServiceImpl implements TimerService {
         JSONObject objRestult = JSONObject.parseObject(resultStr);
         List<Stock> stocks = new ArrayList<>();
         stocks = JSONObject.parseArray(objRestult.getString("lists"), Stock.class);
-//        删除旧数据
-        int deleteStock = timerMapper.deleteStockList();
-//        拉取新数据
-        int resultInsert = timerMapper.insertStock(stocks);
+//        拉取新数据去重新增入库
+        try {
+            int resultInsert = timerMapper.insertStock(stocks);
+        }catch (DuplicateKeyException e){
+            e.printStackTrace();
+        }
+
+//        获取全部人的默认分组id
+        List<Integer> allUserIdList = new ArrayList<>();
+        allUserIdList = timerMapper.getAllUserId();
+        for(int i = 0;i < allUserIdList.size();i++){
+            int groupId = timerMapper.getGroupIdByUserId(allUserIdList.get(i));
+            List<Stock> stockList = new ArrayList<>();
+            stockList = timerMapper.getNoneExitStock(groupId,allUserIdList.get(i));
+            asyncTack.batchLongTimeStocks(allUserIdList.get(i),groupId,stockList);
+        }
     }
 
     @Override

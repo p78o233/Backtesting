@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.domain.po.Stock;
 import com.example.demo.domain.po.StockRecord;
+import com.example.demo.domain.po.TestGroup;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -18,9 +19,9 @@ public interface TimerMapper {
 //    批量插入股票列表
     @Insert({
             "<script>",
-            "insert into stock(stoid, symbol, sname) values " +
+            "insert ignore into stock(stoid, symbol, sname,createTime,modifyTime) values " +
             "<foreach collection='stockList' item='item' index='index' separator=','>"+
-            "(#{item.stoid}, #{item.symbol}, #{item.sname})"+
+            "(#{item.stoid}, #{item.symbol}, #{item.sname},now(),now())"+
             "</foreach>"+
             "</script>"
     })
@@ -40,4 +41,12 @@ public interface TimerMapper {
                     "</script>"
     })
     int insertStockRecord(@Param("stockRecordList")List<StockRecord> stockRecords);
+
+//    获取全部人的默认分组的id
+    @Select("select id from user where isdel = 0")
+    List<Integer> getAllUserId();
+    @Select("select id from testgroup where userId = #{userId} and isdefault = 1")
+    int getGroupIdByUserId(@Param("userId")int userId);
+    @Select("select * from stock where symbol not in (select symbol from groupitem where groupId = #{groupId} and userId = #{userId})")
+    List<Stock> getNoneExitStock(@Param("groupId")int groupId,@Param("userId")int userId);
 }

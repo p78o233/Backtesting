@@ -51,4 +51,23 @@ public class AsyncTack {
         groupItemService.batchInsertGroupItem(dto);
     }
 
+    //    批量插入耗时任务
+    @Async
+    public void batchLongTimeStocks(int userId,int groupId,List<Stock> allStock){
+        //            获取全部在注册的股票
+        BatchInsertGroupItemDto dto = new BatchInsertGroupItemDto();
+        List<String> sys = new ArrayList<>();
+        for(Stock stock : allStock){
+            sys.add(stock.getSymbol());
+        }
+
+        dto.setGroupId(groupId);
+        dto.setUserId(userId);
+        dto.setSymbol(sys);
+        dto.setBuyNum(100);
+        dto.setBuyTime(new Date().getTime()/1000);
+        dto.setEndTime(0L);
+        groupItemService.batchInsertGroupItem(dto);
+    }
+
 }
