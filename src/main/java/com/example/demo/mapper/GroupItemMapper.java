@@ -23,12 +23,20 @@ public interface GroupItemMapper {
     List<Stock> getStockSearch (@Param("symbol")String symbol);
 
 //    新增修改
-    @Insert("insert into groupitem (buyTime,buyNum,buyPrice,symbol,sname,groupId,userId,endTime,createTime) values (#{g.buyTime},#{g.buyNum},#{g.buyPrice},#{g.symbol}," +
-            "#{g.sname},#{g.groupId},#{g.userId},#{g.endTime},#{g.createTime})")
+    @Insert("insert into groupitem (buyTime,buyNum,buyPrice,symbol,sname,groupId,userId,endTime,createTime,modifyTime) values (#{g.buyTime},#{g.buyNum},#{g.buyPrice},#{g.symbol}," +
+            "#{g.sname},#{g.groupId},#{g.userId},#{g.endTime},#{g.createTime},#{g.modifyTime})")
     int insertGroupItem(@Param("g")GroupItem groupItem);
     @Update("update groupitem set buyTime = #{g.buyTime} ,buyNum = #{g.buyNum},buyPrice = #{g.buyPrice},modifyTime = #{g.modifyTime} ,endTime =#{g.endTime} where id = #{g.id}")
     int updateGroupItem(@Param("g")GroupItem groupItem);
-
+    @Insert({
+            "<script>",
+            "insert into groupitem (buyTime,buyNum,buyPrice,symbol,sname,groupId,userId,endTime,createTime,modifyTime) values ",
+            "<foreach collection='testLists' item='item' index='index' separator=','>",
+            "(#{item.buyTime}, #{item.buyNum}, #{item.buyPrice},#{item.symbol}, #{item.sname}, #{item.groupId},#{item.userId}, #{item.endTime}, #{item.createTime},#{item.modifyTime})",
+            "</foreach>",
+            "</script>"
+    })
+    int bacthGroupItem(@Param(value = "testLists")List<GroupItem> testLists);
 //    批量操作
     @Update("<script>" +"update groupitem set isdel = 1 "+
             " and id in "+

@@ -178,6 +178,7 @@ public class GroupItemServiceImpl implements GroupItemService {
         if(groupItem.getId() == null){
 //            新增
             groupItem.setCreateTime(new Date());
+            groupItem.setModifyTime(new Date());
             if(groupItemMapper.insertGroupItem(groupItem)>0)
                 return 1;
             return 0;
@@ -242,6 +243,7 @@ public class GroupItemServiceImpl implements GroupItemService {
 
     @Override
     public int batchInsertGroupItem(BatchInsertGroupItemDto dto) {
+        List<GroupItem> list = new ArrayList<>();
         for(int i = 0 ;i < dto.getSymbol().size();i++){
             GroupItem item = new GroupItem();
             item.setBuyTime(dto.getBuyTime());
@@ -253,8 +255,10 @@ public class GroupItemServiceImpl implements GroupItemService {
             item.setUserId(dto.getUserId());
             item.setEndTime(dto.getEndTime());
             item.setCreateTime(new Date());
-            groupItemMapper.insertGroupItem(item);
+            item.setModifyTime(new Date());
+            list.add(item);
         }
+        groupItemMapper.bacthGroupItem(list);
         return 1;
     }
 
