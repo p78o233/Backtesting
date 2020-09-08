@@ -9,6 +9,7 @@ import com.example.demo.domain.po.GroupItem;
 import com.example.demo.domain.vo.IndexVo;
 import com.example.demo.mapper.IndexMapper;
 import com.example.demo.service.IndexService;
+import com.example.demo.utils.ApiUtils;
 import com.example.demo.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +22,10 @@ import java.util.*;
 public class IndexServiceImpl implements IndexService {
     @Autowired
     private IndexMapper mapper;
-    @Value("${testAppKey}")
-    private String key;
-    @Value("${testSign}")
-    private String sign;
+//    @Value("${testAppKey}")
+//    private String key;
+//    @Value("${testSign}")
+//    private String sign;
 
     @Override
     public IndexVo getIndexVo(int userId) {
@@ -52,12 +53,12 @@ public class IndexServiceImpl implements IndexService {
             Calendar cal = Calendar.getInstance();
             cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
             long endTime = cal.getTime().getTime() / 1000;
-            float nowPrice = getStockNowPrice(item.getSymbol());
+            float nowPrice = ApiUtils.getStockNowPrice(item.getSymbol());
             totalMarketValue += nowPrice * item.getBuyNum();
             totalCost += item.getBuyPrice() * item.getBuyNum();
             if (item.getEndTime() < endTime && item.getEndTime() != 0) {
-                dayCost += getStockYesterdayPrice(item.getSymbol()) * item.getBuyNum();
-                dayMarketValue += getStockNowPrice(item.getSymbol()) * item.getBuyNum();
+                dayCost += ApiUtils.getStockYesterdayPrice(item.getSymbol()) * item.getBuyNum();
+                dayMarketValue += ApiUtils.getStockNowPrice(item.getSymbol()) * item.getBuyNum();
             }
         }
 //        总的
@@ -71,39 +72,4 @@ public class IndexServiceImpl implements IndexService {
         return vo;
     }
 
-    //    第三方接口查询单个查询实时价格
-    public float getStockNowPrice(String stockNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("app", "finance.stock_realtime");
-        params.put("symbol", stockNum);
-        params.put("appkey", key);
-        params.put("sign", sign);
-        String httpStr = HttpUtils.get("http://api.k780.com", params);
-        JSONObject httpObj = JSONObject.parseObject(httpStr);
-        if (httpObj.getString("success").equals("0")) {
-            return 0.0f;
-        }
-        JSONObject resultObj = httpObj.getJSONObject("result");
-        JSONObject lists = resultObj.getJSONObject("lists");
-        JSONObject obj = lists.getJSONObject(stockNum);
-        return obj.getFloat("last_price");
-    }
-
-    //    第三方接口查询昨日收盘数据
-    public float getStockYesterdayPrice(String stockNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("app", "finance.stock_realtime");
-        params.put("symbol", stockNum);
-        params.put("appkey", key);
-        params.put("sign", sign);
-        String httpStr = HttpUtils.get("http://api.k780.com", params);
-        JSONObject httpObj = JSONObject.parseObject(httpStr);
-        if (httpObj.getString("success").equals("0")) {
-            return 0.0f;
-        }
-        JSONObject resultObj = httpObj.getJSONObject("result");
-        JSONObject lists = resultObj.getJSONObject("lists");
-        JSONObject obj = lists.getJSONObject(stockNum);
-        return obj.getFloat("yesy_price");
-    }
 }

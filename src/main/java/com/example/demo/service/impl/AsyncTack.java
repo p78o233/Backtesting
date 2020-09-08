@@ -51,22 +51,4 @@ public class AsyncTack {
         groupItemService.batchInsertGroupItem(dto);
     }
 
-    //    第三方接口查询单个查询实时价格
-    public float getStockNowPrice(String stockNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("app", "finance.stock_realtime");
-        params.put("symbol", stockNum);
-        params.put("appkey", key);
-        params.put("sign", sign);
-        String httpStr = HttpUtils.get("http://api.k780.com", params);
-        JSONObject httpObj = JSONObject.parseObject(httpStr);
-        if(httpObj.getString("success").equals("0")){
-            return 0.0f;
-        }
-        JSONObject resultObj = httpObj.getJSONObject("result");
-        JSONObject lists = resultObj.getJSONObject("lists");
-        JSONObject obj = lists.getJSONObject(stockNum);
-        return obj.getFloat("last_price");
-    }
-
 }

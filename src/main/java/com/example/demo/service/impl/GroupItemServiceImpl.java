@@ -13,6 +13,7 @@ import com.example.demo.domain.po.Stock;
 import com.example.demo.domain.vo.GroupItemVo;
 import com.example.demo.mapper.GroupItemMapper;
 import com.example.demo.service.GroupItemService;
+import com.example.demo.utils.ApiUtils;
 import com.example.demo.utils.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,9 +55,9 @@ public class GroupItemServiceImpl implements GroupItemService {
             float nowPrice = 0.0f;
 //            有设置停止时间就查历史记录,没设置就查最新记录
             if (item.getEndTime() != 0) {
-                nowPrice = getStockHistoryPrice(item.getEndTime(), item.getSymbol());
+                nowPrice = ApiUtils.getStockHistoryPrice(item.getEndTime(), item.getSymbol());
             } else {
-                nowPrice = getStockNowPrice(item.getSymbol());
+                nowPrice = ApiUtils.getStockNowPrice(item.getSymbol());
             }
             vo.setNowPrice(nowPrice);
             vo.setProfit((nowPrice - item.getBuyNum()) * item.getBuyNum());
@@ -118,9 +119,9 @@ public class GroupItemServiceImpl implements GroupItemService {
         float nowPrice = 0.0f;
 //            有设置停止时间就查历史记录,没设置就查最新记录
         if (item.getEndTime() != 0) {
-            nowPrice = getStockHistoryPrice(item.getEndTime(), item.getSymbol());
+            nowPrice = ApiUtils.getStockHistoryPrice(item.getEndTime(), item.getSymbol());
         } else {
-            nowPrice = getStockNowPrice(item.getSymbol());
+            nowPrice = ApiUtils.getStockNowPrice(item.getSymbol());
         }
         vo.setNowPrice(nowPrice);
         vo.setProfit((nowPrice - item.getBuyNum()) * item.getBuyNum());
@@ -201,7 +202,7 @@ public class GroupItemServiceImpl implements GroupItemService {
         List<Integer> list = new ArrayList<>();
         for(int i = 0; i < dto.getItemIds().size() ;i++){
             GroupItem item = new GroupItem();
-            item.setBuyPrice(getStockHistoryPrice(dto.getBeginTime(),groupItemMapper.getSymbolByItemId(dto.getItemIds().get(i))));
+            item.setBuyPrice(ApiUtils.getStockHistoryPrice(dto.getBeginTime(),groupItemMapper.getSymbolByItemId(dto.getItemIds().get(i))));
             item.setBuyTime(dto.getBeginTime());
             item.setId(dto.getItemIds().get(i));
             if(groupItemMapper.countBuyBiggerEnd(dto.getBeginTime(),dto.getItemIds().get(i))>0){
@@ -245,7 +246,7 @@ public class GroupItemServiceImpl implements GroupItemService {
             GroupItem item = new GroupItem();
             item.setBuyTime(dto.getBuyTime());
             item.setBuyNum(dto.getBuyNum());
-            item.setBuyPrice(getStockHistoryPrice(dto.getBuyTime(),dto.getSymbol().get(i)));
+            item.setBuyPrice(ApiUtils.getStockHistoryPrice(dto.getBuyTime(),dto.getSymbol().get(i)));
             item.setSname(groupItemMapper.getSnameSymbol(dto.getSymbol().get(i)));
             item.setSymbol(dto.getSymbol().get(i));
             item.setGroupId(dto.getGroupId());
@@ -257,44 +258,5 @@ public class GroupItemServiceImpl implements GroupItemService {
         return 1;
     }
 
-    //    第三方接口查询单个查询实时价格
-    public float getStockNowPrice(String stockNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("app", "finance.stock_realtime");
-        params.put("symbol", stockNum);
-        params.put("appkey", key);
-        params.put("sign", sign);
-        String httpStr = HttpUtils.get("http://api.k780.com", params);
-        JSONObject httpObj = JSONObject.parseObject(httpStr);
-        if(httpObj.getString("success").equals("0")){
-            return 0.0f;
-        }
-        JSONObject resultObj = httpObj.getJSONObject("result");
-        JSONObject lists = resultObj.getJSONObject("lists");
-        JSONObject obj = lists.getJSONObject(stockNum);
-        return obj.getFloat("last_price");
-    }
 
-    //    第三方接口查询单个历史数据
-    public float getStockHistoryPrice(long endTime, String stockNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("app", "finance.stock_history");
-        params.put("symbol", stockNum);
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-        String endTimeStr = format.format(endTime * 1000);
-        String jsonKey = format1.format(endTime * 1000);
-        params.put("date", endTimeStr);
-        params.put("appkey", key);
-        params.put("sign", sign);
-        String httpStr = HttpUtils.get("http://api.k780.com", params);
-        JSONObject httpObj = JSONObject.parseObject(httpStr);
-        if(httpObj.getString("success").equals("0")){
-            return 0.0f;
-        }
-        JSONObject resultObj = httpObj.getJSONObject("result");
-        JSONObject listObj = resultObj.getJSONObject("lists");
-        JSONObject obj = listObj.getJSONObject(jsonKey);
-        return obj.getFloat("last_price");
-    }
 }
