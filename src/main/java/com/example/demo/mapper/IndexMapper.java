@@ -13,6 +13,6 @@ import java.util.List;
  */
 @Mapper
 public interface IndexMapper {
-    @Select("select * from groupitem where userId = #{userId} and isdel = 0")
+    @Select("select * from groupitem where userId = #{userId} and isdel = 0 and groupId not in (select id from testgroup where userId = #{userId} and isdel = 0 and isdefault = 1)")
     List<GroupItem> getAllGroupItem(@Param("userId")int userId);
 }
