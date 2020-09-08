@@ -72,4 +72,25 @@ public class ApiUtils {
         JSONObject obj = lists.getJSONObject(stockNum);
         return obj.getFloat("yesy_price");
     }
+
+//    获取今天是否工作日
+    public static Boolean getWorkDay(String date){
+        HashMap<String, String> params = new HashMap<>();
+        params.put("app", "life.workday");
+        params.put("date", date);
+        params.put("appkey", key);
+        params.put("sign", sign);
+        params.put("format", "json");
+        String httpStr = HttpUtils.get("http://api.k780.com", params);
+        JSONObject httpObj = JSONObject.parseObject(httpStr);
+        JSONObject resultObj = httpObj.getJSONObject("result");
+        if(resultObj.getString("workmk").equals("1")){
+            return true;
+        }else if(resultObj.getString("workmk").equals("2")){
+            return false;
+        }else {
+            return null;
+        }
+
+    }
 }

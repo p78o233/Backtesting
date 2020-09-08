@@ -1,11 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.service.TimerService;
+import com.example.demo.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /*
  * @author p78o2
@@ -16,17 +20,47 @@ import org.springframework.web.bind.annotation.RestController;
 public class TimmerController {
     @Autowired
     private TimerService timerService;
+
+    private boolean workDay = true;
 //    每日获取股票列表
     @GetMapping(value = "/insertStock")
     @Scheduled(cron = "0 0 6 * * ? ")
     public void insertStock(){
-        timerService.insertStock();
+        if (workDay) {
+            timerService.insertStock();
+        }
     }
 
 //    每日获取收盘价格
     @GetMapping(value = "/getDailyRecord")
     @Scheduled(cron = "0 5 15 * * ? ")
     public void getDailyRecord(){
-        timerService.getDailyRecord();
+        if(workDay) {
+            timerService.getDailyRecord();
+        }
+    }
+
+    @GetMapping(value = "/getWorkDay")
+    @Scheduled(cron = "0 0 1 * * ? ")
+    public void getWorkDay(){
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String beginDateStr = format.format(new Date().getTime());
+        this.setWorkDay(ApiUtils.getWorkDay(beginDateStr));
+    }
+
+    public TimerService getTimerService() {
+        return timerService;
+    }
+
+    public void setTimerService(TimerService timerService) {
+        this.timerService = timerService;
+    }
+
+    public boolean isWorkDay() {
+        return workDay;
+    }
+
+    public void setWorkDay(boolean workDay) {
+        this.workDay = workDay;
     }
 }
