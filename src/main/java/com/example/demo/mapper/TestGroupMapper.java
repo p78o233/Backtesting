@@ -45,4 +45,6 @@ public interface TestGroupMapper {
             "</foreach>"+
             "</script>")
     int batchDeleteAllGroupItem(@Param("userId")int userId,@Param("ids")List<Integer> ids);
+    @Select("select isdefault from testgroup where isdel = 0 and id = #{id}")
+    int getIsDefault(@Param("id")int id);
 }

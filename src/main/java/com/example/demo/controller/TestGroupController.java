@@ -84,7 +84,10 @@ public class TestGroupController {
     @PostMapping(value = "/batchDeleteGroupItem")
     public R batchDeleteGroupItem(@RequestBody BatchGroupItemEditDto dto){
         int result = groupItemService.batchDeleteGroupItem(dto);
-        if(result == 1){
+        if(result == -1){
+            return new R (false,R.REQUEST_FAIL,null,"默认分组不能删除");
+        }
+        else if(result == 1){
             return new R (true,R.REQUEST_SUCCESS,null,"操作成功");
         }else{
             return new R (false,R.REQUEST_FAIL,null,"操作失败");

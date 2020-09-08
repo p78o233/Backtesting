@@ -51,6 +51,13 @@ public class TestGroupServiceImpl implements TestGroupService {
 
     @Override
     public int batchDeleteTestGroup(BatchDeleteTestGroup dto) {
+//        检查删除的分组是否默认分组
+        for(int i = 0;i<dto.getIds().size();i++){
+            if(testGroupMapper.getIsDefault(dto.getIds().get(i)) == 1){
+                dto.getIds().remove(i);
+                break;
+            }
+        }
         if(testGroupMapper.batchDeleteTestGroup(dto.getUserId(),dto.getIds())>0) {
             testGroupMapper.batchDeleteAllGroupItem(dto.getUserId(),dto.getIds());
             return 1;

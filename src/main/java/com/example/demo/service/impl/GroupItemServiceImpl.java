@@ -193,6 +193,10 @@ public class GroupItemServiceImpl implements GroupItemService {
 
     @Override
     public int batchDeleteGroupItem(BatchGroupItemEditDto dto) {
+//        检查这个id的组是不是默认分组
+        if(groupItemMapper.getIsDefault(dto.getGroupId())==1){
+            return -1;
+        }
         if(groupItemMapper.batchDeleteAllGroupItem(dto.getItemIds())>0)
             return 1;
         return 0;

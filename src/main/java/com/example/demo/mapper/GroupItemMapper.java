@@ -45,6 +45,8 @@ public interface GroupItemMapper {
             "</foreach>"+
             "</script>")
     int batchDeleteAllGroupItem(@Param("ids")List<Integer> ids);
+    @Select("select isdefault from testgroup where isdel = 0 and id = #{id}")
+    int getIsDefault(@Param("id")int id);
 
     @Select("select symbol from groupitem where id = #{id}")
     String getSymbolByItemId(@Param("id")int id);
