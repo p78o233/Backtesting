@@ -33,7 +33,7 @@ public class IndexServiceImpl implements IndexService {
         List<GroupItem> groupItems = new ArrayList<>();
         groupItems = mapper.getAllGroupItem(userId);
 //        总盈亏百分比
-        double profitPercentage = 0.0f;
+        double profitPercentage = 0.0;
 //        总盈亏数字
         double profitValue = 0.0;
 //        总市值
