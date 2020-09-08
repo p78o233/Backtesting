@@ -4,6 +4,7 @@ import com.example.demo.domain.po.GroupItem;
 import com.example.demo.domain.po.Stock;
 import org.apache.ibatis.annotations.*;
 
+import java.util.Date;
 import java.util.List;
 
 /*
@@ -70,4 +71,7 @@ public interface GroupItemMapper {
 //    检查卖出时间是否小于买入时间
     @Select("select count(*) from groupitem where #{endTime} < buyTime and isdel = 0 and id = #{id}")
     int countEndSmallerBuy(@Param("endTime")long endTime,@Param("id")int id);
+
+    @Select("select createTime from stock where symbol = (select symbol from groupitem where id = #{id})")
+    Date getStockBySymbol(@Param("id")int id);
 }
