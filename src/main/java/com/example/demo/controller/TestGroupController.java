@@ -52,8 +52,8 @@ public class TestGroupController {
     }
 
     @GetMapping(value = "/getGroupItem")
-    public R getGroupItem(@RequestParam int groupId,@RequestParam int cate){
-        return new R(true,R.REQUEST_SUCCESS,groupItemService.getGroupItem(groupId,cate),"查询成功");
+    public R getGroupItem(@RequestParam int groupId,@RequestParam int page,@RequestParam int pageSize){
+        return new R(true,R.REQUEST_SUCCESS,groupItemService.getGroupItem(groupId,page,pageSize),"查询成功");
     }
 
     @GetMapping(value = "/getGroupDetail")

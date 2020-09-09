@@ -2,6 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.domain.po.GroupItem;
 import com.example.demo.domain.po.Stock;
+import com.example.demo.domain.po.StockRecord;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -14,8 +15,10 @@ import java.util.List;
 @Mapper
 public interface GroupItemMapper {
 //    根据组别id获取组别详细列表
-    @Select("select * from groupitem where groupId = #{groupId} and isdel = 0")
-    List<GroupItem> getGroupAllItems(@Param("groupId")int groupId);
+    @Select("select count(*) from groupitem where groupId = #{groupId} and isdel = 0")
+    int getGroupAllItemCount(@Param("groupId")int groupId);
+    @Select("select * from groupitem where groupId = #{groupId} and isdel = 0 order by modifyTime desc limit #{start} , #{pageSize}")
+    List<GroupItem> getGroupAllItems(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
 //    获取组别item详细
     @Select("select * from groupitem where id = #{id} and isdel = 0")
     GroupItem getGroupItemDetail(@Param("id")int id);
@@ -74,4 +77,10 @@ public interface GroupItemMapper {
 
     @Select("select createTime from stock where symbol = (select symbol from groupitem where id = #{id})")
     Date getStockBySymbol(@Param("id")int id);
+
+    @Select("select * from stockrecord where symbol = #{symbol} and recordTime > #{beginTime} and recordTime < #{endTime}")
+    List<StockRecord> getAllStockEndTime(@Param("symbol")String symbol,@Param("beginTime")Long beginTime,@Param("endTime")Long endTime);
+
+    @Select("select * from stockrecord where symbol = #{symbol} and recordTime > #{beginTime}")
+    List<StockRecord> getAllStockEndTimeNone(@Param("symbol")String symbol,@Param("beginTime")Long beginTime);
 }

@@ -5,6 +5,7 @@ package com.example.demo.service;
  */
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.callback.PageInfo;
 import com.example.demo.callback.R;
 import com.example.demo.domain.dto.BatchGroupItemEditDto;
 import com.example.demo.domain.dto.BatchInsertGroupItemDto;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public interface GroupItemService {
 //    获取分组下的回测数据列表
-    public List<GroupItemVo> getGroupItem(int groupId, int cate);
+    public PageInfo<GroupItemVo> getGroupItem(int groupId, int page,int pageSize);
 //    获取分组下的回测数据详细
     public GroupItemVo getGroupDetail(int itemId);
 //    根据股票编号模糊查询股票列表
@@ -33,4 +34,6 @@ public interface GroupItemService {
     public R batchEditEndTimeGroupItem(BatchGroupItemEditDto dto);
 //    批量新增回测分组内数据
     public int batchInsertGroupItem(BatchInsertGroupItemDto dto);
+    //    批量新增回测分组内数据
+    public int batchInsertGroupItemRegister(BatchInsertGroupItemDto dto);
 }

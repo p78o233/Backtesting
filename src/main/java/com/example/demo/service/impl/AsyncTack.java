@@ -48,7 +48,7 @@ public class AsyncTack {
         dto.setBuyNum(100);
         dto.setBuyTime(new Date().getTime()/1000);
         dto.setEndTime(0L);
-        groupItemService.batchInsertGroupItem(dto);
+        groupItemService.batchInsertGroupItemRegister(dto);
     }
 
     //    批量插入耗时任务

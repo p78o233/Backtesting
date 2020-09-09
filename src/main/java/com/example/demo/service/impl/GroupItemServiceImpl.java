@@ -5,11 +5,13 @@ package com.example.demo.service.impl;
  */
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.callback.PageInfo;
 import com.example.demo.callback.R;
 import com.example.demo.domain.dto.BatchGroupItemEditDto;
 import com.example.demo.domain.dto.BatchInsertGroupItemDto;
 import com.example.demo.domain.po.GroupItem;
 import com.example.demo.domain.po.Stock;
+import com.example.demo.domain.po.StockRecord;
 import com.example.demo.domain.vo.GroupItemVo;
 import com.example.demo.mapper.GroupItemMapper;
 import com.example.demo.service.GroupItemService;
@@ -33,9 +35,11 @@ public class GroupItemServiceImpl implements GroupItemService {
     private String sign;
 
     @Override
-    public List<GroupItemVo> getGroupItem(int groupId, int cate) {
+    public PageInfo<GroupItemVo> getGroupItem(int groupId, int page,int pageSize) {
+        int start = (page-1)*pageSize;
+        int count = groupItemMapper.getGroupAllItemCount(groupId);
         List<GroupItem> groupItems = new ArrayList<>();
-        groupItems = groupItemMapper.getGroupAllItems(groupId);
+        groupItems = groupItemMapper.getGroupAllItems(groupId,start,pageSize);
         List<GroupItemVo> groupItemVos = new ArrayList<>();
         for (GroupItem item : groupItems) {
             GroupItemVo vo = new GroupItemVo();
@@ -43,8 +47,8 @@ public class GroupItemServiceImpl implements GroupItemService {
             vo.setId(item.getId());
             vo.setBuyTime(item.getBuyTime());
             vo.setBuyNum(item.getBuyNum());
-            vo.setBuyTime(item.getBuyTime());
             vo.setSymbol(item.getSymbol());
+            vo.setBuyPrice(item.getBuyPrice());
             vo.setSname(item.getSname());
             vo.setGroupId(item.getGroupId());
             vo.setIsdel(item.getIsdel());
@@ -57,45 +61,77 @@ public class GroupItemServiceImpl implements GroupItemService {
             if (item.getEndTime() != 0) {
                 nowPrice = ApiUtils.getStockHistoryPrice(item.getEndTime(), item.getSymbol());
             } else {
-                nowPrice = ApiUtils.getStockNowPrice(item.getSymbol());
+                nowPrice = getStockNowPrice(item.getSymbol());
             }
             vo.setNowPrice(nowPrice);
-            vo.setProfit((nowPrice - item.getBuyNum()) * item.getBuyNum());
+            vo.setProfit((nowPrice - item.getBuyPrice()) * item.getBuyNum());
             DecimalFormat decimalFormat = new DecimalFormat("00.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
-            String p = decimalFormat.format(((nowPrice / item.getBuyPrice()) - 1) * 100);//format 返回的是字符串
-            vo.setProfitPencent(p + "%");
+            if(item.getBuyPrice() != 0.0f) {
+                String p = decimalFormat.format(((nowPrice / item.getBuyPrice()) - 1) * 100);//format 返回的是字符串
+                vo.setProfitPencent(p + "%");
+            }else{
+                vo.setProfitPencent(0.0 + "%");
+            }
+
+//            检查在回测日期记录内涨跌平数据
+            List<StockRecord> list = new ArrayList<>();
+            if(item.getEndTime()==0){
+                list = groupItemMapper.getAllStockEndTimeNone(item.getSymbol(),item.getBuyTime());
+            }else{
+                list = groupItemMapper.getAllStockEndTime(item.getSymbol(),item.getBuyTime(),item.getEndTime());
+            }
+            int raiseDays = 0;
+            int dropDays = 0;
+            int blanceDays = 0;
+            for(StockRecord sr : list){
+                if(sr.getBeginPrice()>sr.getEndPrice()){
+                    dropDays+=1;
+                }else if(sr.getBeginPrice() == sr.getEndPrice()){
+                    blanceDays += 1;
+                }else{
+                    raiseDays += 1;
+                }
+            }
+            vo.setTotalDays(list.size());
+            vo.setRaiseDays(raiseDays);
+            vo.setDropDays(dropDays);
+            vo.setBlanceDays(blanceDays);
+
             groupItemVos.add(vo);
         }
-        if (cate == 1) {
-//            利润从大到小
-            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
-                @Override
-                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
-                    float diff = (vo1.getNowPrice()/vo1.getBuyNum()) - (vo2.getNowPrice()/vo2.getBuyNum());
-                    if (diff > 0) {
-                        return 1;
-                    } else if (diff < 0) {
-                        return -1;
-                    }
-                    return 0; //相等为0
-                }
-            });
-        } else {
-//            利润从小到大
-            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
-                @Override
-                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
-                    float diff = (vo1.getNowPrice()/vo1.getBuyNum()) - (vo2.getNowPrice()/vo2.getBuyNum());
-                    if (diff > 0) {
-                        return -1;
-                    } else if (diff < 0) {
-                        return 1;
-                    }
-                    return 0; //相等为0
-                }
-            });
-        }
-        return groupItemVos;
+
+        return new PageInfo<GroupItemVo>(count,groupItemVos);
+
+//        排序
+//        if (cate == 1) {
+////            利润从大到小
+//            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
+//                @Override
+//                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
+//                    float diff = (vo1.getNowPrice()/vo1.getBuyNum()) - (vo2.getNowPrice()/vo2.getBuyNum());
+//                    if (diff > 0) {
+//                        return 1;
+//                    } else if (diff < 0) {
+//                        return -1;
+//                    }
+//                    return 0; //相等为0
+//                }
+//            });
+//        } else {
+////            利润从小到大
+//            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
+//                @Override
+//                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
+//                    float diff = (vo1.getNowPrice()/vo1.getBuyNum()) - (vo2.getNowPrice()/vo2.getBuyNum());
+//                    if (diff > 0) {
+//                        return -1;
+//                    } else if (diff < 0) {
+//                        return 1;
+//                    }
+//                    return 0; //相等为0
+//                }
+//            });
+//        }
     }
 
     @Override
@@ -306,5 +342,35 @@ public class GroupItemServiceImpl implements GroupItemService {
         return 1;
     }
 
+    @Override
+    public int batchInsertGroupItemRegister(BatchInsertGroupItemDto dto) {
+        List<GroupItem> list = new ArrayList<>();
+        for(int i = 0 ;i < dto.getSymbol().size();i++){
+            GroupItem item = new GroupItem();
+            item.setBuyTime(dto.getBuyTime());
+            item.setBuyNum(dto.getBuyNum());
+            item.setBuyPrice(getStockNowPrice(dto.getSymbol().get(i)));
+            item.setSname(groupItemMapper.getSnameSymbol(dto.getSymbol().get(i)));
+            item.setSymbol(dto.getSymbol().get(i));
+            item.setGroupId(dto.getGroupId());
+            item.setUserId(dto.getUserId());
+            item.setEndTime(0L);
+            item.setCreateTime(new Date());
+            item.setModifyTime(new Date());
+            list.add(item);
+        }
+        groupItemMapper.bacthGroupItem(list);
+        return 1;
+    }
 
+    //    单个查询
+    public Float getStockNowPrice(String stockNum) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("list", stockNum);
+        String resultStr = HttpUtils.get("http://hq.sinajs.cn", params);
+        String result[] = resultStr.split(",");
+        if(result.length<4)
+            return 0.0f;
+        return Float.valueOf(result[3]);
+    }
 }

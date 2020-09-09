@@ -38,27 +38,17 @@ public class GroupItemVo {
     private float profit;
 //    盈亏百分比
     private String profitPencent;
+//    总天数
+    private int totalDays;
+//    涨天数
+    private int raiseDays;
+//    跌天数
+    private int dropDays;
+//    平天数
+    private int blanceDays;
 
-    @Override
-    public String toString() {
-        return "GroupItemVo{" +
-                "id=" + id +
-                ", buyTime=" + buyTime +
-                ", buyNum=" + buyNum +
-                ", buyPrice=" + buyPrice +
-                ", symbol='" + symbol + '\'' +
-                ", sname='" + sname + '\'' +
-                ", groupId=" + groupId +
-                ", isdel=" + isdel +
-                ", createTime=" + createTime +
-                ", modifyTime=" + modifyTime +
-                ", userId=" + userId +
-                ", endTime=" + endTime +
-                ", nowPrice=" + nowPrice +
-                ", profit=" + profit +
-                ", profitPencent='" + profitPencent + '\'' +
-                '}';
-    }
+
+
 
     public GroupItemVo() {
     }
@@ -183,7 +173,64 @@ public class GroupItemVo {
         this.profitPencent = profitPencent;
     }
 
-    public GroupItemVo(Integer id, Long buyTime, int buyNum, float buyPrice, String symbol, String sname, int groupId, int isdel, Date createTime, Date modifyTime, int userId, Long endTime, float nowPrice, float profit, String profitPencent) {
+    public int getTotalDays() {
+        return totalDays;
+    }
+
+    public void setTotalDays(int totalDays) {
+        this.totalDays = totalDays;
+    }
+
+    public int getRaiseDays() {
+        return raiseDays;
+    }
+
+    public void setRaiseDays(int raiseDays) {
+        this.raiseDays = raiseDays;
+    }
+
+    public int getDropDays() {
+        return dropDays;
+    }
+
+    public void setDropDays(int dropDays) {
+        this.dropDays = dropDays;
+    }
+
+    public int getBlanceDays() {
+        return blanceDays;
+    }
+
+    public void setBlanceDays(int blanceDays) {
+        this.blanceDays = blanceDays;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupItemVo{" +
+                "id=" + id +
+                ", buyTime=" + buyTime +
+                ", buyNum=" + buyNum +
+                ", buyPrice=" + buyPrice +
+                ", symbol='" + symbol + '\'' +
+                ", sname='" + sname + '\'' +
+                ", groupId=" + groupId +
+                ", isdel=" + isdel +
+                ", createTime=" + createTime +
+                ", modifyTime=" + modifyTime +
+                ", userId=" + userId +
+                ", endTime=" + endTime +
+                ", nowPrice=" + nowPrice +
+                ", profit=" + profit +
+                ", profitPencent='" + profitPencent + '\'' +
+                ", totalDays=" + totalDays +
+                ", raiseDays=" + raiseDays +
+                ", dropDays=" + dropDays +
+                ", blanceDays=" + blanceDays +
+                '}';
+    }
+
+    public GroupItemVo(Integer id, Long buyTime, int buyNum, float buyPrice, String symbol, String sname, int groupId, int isdel, Date createTime, Date modifyTime, int userId, Long endTime, float nowPrice, float profit, String profitPencent, int totalDays, int raiseDays, int dropDays, int blanceDays) {
         this.id = id;
         this.buyTime = buyTime;
         this.buyNum = buyNum;
@@ -199,5 +246,9 @@ public class GroupItemVo {
         this.nowPrice = nowPrice;
         this.profit = profit;
         this.profitPencent = profitPencent;
+        this.totalDays = totalDays;
+        this.raiseDays = raiseDays;
+        this.dropDays = dropDays;
+        this.blanceDays = blanceDays;
     }
 }
