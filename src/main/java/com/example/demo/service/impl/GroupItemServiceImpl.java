@@ -248,9 +248,17 @@ public class GroupItemServiceImpl implements GroupItemService {
             for(Integer index : dto.getItemIds()){
 //                获取每个股票的创建时间
                 Date beginTime = groupItemMapper.getStockBySymbol(index);
-                if(dto.getBeginTime()<beginTime.getTime()){
+                if(dto.getBeginTime()<(beginTime.getTime()/1000)){
 //                    回测时间比创建时间早
                     list.add(index);
+                }else{
+                    GroupItem item = new GroupItem();
+//                    不查第三方接口查自己的记录
+                    item.setBuyPrice(groupItemMapper.getEndPrice(groupItemMapper.getSymbolByItemId(index),dto.getBeginTime()) == null ?
+                            0.0f : groupItemMapper.getEndPrice(groupItemMapper.getSymbolByItemId(dto.getItemIds().get(index)),dto.getBeginTime()));
+                    item.setBuyTime(dto.getBeginTime());
+                    item.setId(index);
+                    groupItemMapper.batchEditBeginTimeGroupItem(item);
                 }
             }
             if(list.size()>0){
@@ -259,23 +267,24 @@ public class GroupItemServiceImpl implements GroupItemService {
                 return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
             }
         }
-
-        List<Integer> list = new ArrayList<>();
-        for(int i = 0; i < dto.getItemIds().size() ;i++){
-            GroupItem item = new GroupItem();
-            item.setBuyPrice(ApiUtils.getStockHistoryPrice(dto.getBeginTime(),groupItemMapper.getSymbolByItemId(dto.getItemIds().get(i))));
-            item.setBuyTime(dto.getBeginTime());
-            item.setId(dto.getItemIds().get(i));
-            if(groupItemMapper.countBuyBiggerEnd(dto.getBeginTime(),dto.getItemIds().get(i))>0){
-                list.add(dto.getItemIds().get(i));
-            }else {
-                groupItemMapper.batchEditBeginTimeGroupItem(item);
+        else {
+            List<Integer> list = new ArrayList<>();
+            for (int i = 0; i < dto.getItemIds().size(); i++) {
+                GroupItem item = new GroupItem();
+                item.setBuyPrice(ApiUtils.getStockHistoryPrice(dto.getBeginTime(), groupItemMapper.getSymbolByItemId(dto.getItemIds().get(i))));
+                item.setBuyTime(dto.getBeginTime());
+                item.setId(dto.getItemIds().get(i));
+                if (groupItemMapper.countBuyBiggerEnd(dto.getBeginTime(), dto.getItemIds().get(i)) > 0) {
+                    list.add(dto.getItemIds().get(i));
+                } else {
+                    groupItemMapper.batchEditBeginTimeGroupItem(item);
+                }
             }
-        }
-        if(list.size()>0){
-            return new R(true,R.SOME_ERROR,list,"起始时间不能大于结束时间");
-        }else{
-            return new R(true,R.REQUEST_SUCCESS,null,"操作成功");
+            if (list.size() > 0) {
+                return new R(true, R.SOME_ERROR, list, "起始时间不能大于结束时间");
+            } else {
+                return new R(true, R.REQUEST_SUCCESS, null, "操作成功");
+            }
         }
     }
 

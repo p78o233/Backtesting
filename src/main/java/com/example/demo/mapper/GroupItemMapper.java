@@ -83,4 +83,7 @@ public interface GroupItemMapper {
 
     @Select("select * from stockrecord where symbol = #{symbol} and recordTime > #{beginTime}")
     List<StockRecord> getAllStockEndTimeNone(@Param("symbol")String symbol,@Param("beginTime")Long beginTime);
+
+    @Select("select endPrice from stockrecord where symbol = #{symbol} and recordTime = #{recordTime}")
+    Float getEndPrice(@Param("symbol")String symbol,@Param("recordTime") Long recordTime);
 }
