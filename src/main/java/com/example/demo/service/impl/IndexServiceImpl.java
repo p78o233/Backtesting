@@ -63,10 +63,10 @@ public class IndexServiceImpl implements IndexService {
         }
 //        总的
         profitValue = totalMarketValue - totalCost;
-        profitPercentage = ((totalMarketValue / totalCost)- 1) * 100;
+        profitPercentage = totalCost != 0?((totalMarketValue / totalCost)- 1) * 100 : 0;
 //        当日的
         dayProfitValue = dayMarketValue - dayCost;
-        dayProfitPercentage = ((dayMarketValue / dayCost) - 1) * 100;
+        dayProfitPercentage = dayCost != 0 ? ((dayMarketValue / dayCost) - 1) * 100 : 0;
 
         IndexVo vo = new IndexVo(profitPercentage,profitValue,totalMarketValue,totalCost,dayProfitPercentage,dayProfitValue);
         return vo;
