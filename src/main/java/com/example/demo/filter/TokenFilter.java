@@ -38,6 +38,7 @@ public class TokenFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         String path = request.getRequestURI().substring(request.getContextPath().length()).replaceAll("[/]+$", "");
+        System.out.println("===========================请求路径：========================="+path);
         if(!path.split("/")[1].equals("stock")){
             filterChain.doFilter(request, response);
         }
