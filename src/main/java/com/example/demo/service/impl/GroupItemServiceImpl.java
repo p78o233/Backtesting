@@ -367,6 +367,10 @@ public class GroupItemServiceImpl implements GroupItemService {
             item.setCreateTime(new Date());
             item.setModifyTime(new Date());
             list.add(item);
+            if(i%100 == 0){
+                groupItemMapper.bacthGroupItem(list);
+                list = new ArrayList<>();
+            }
         }
         groupItemMapper.bacthGroupItem(list);
         return 1;
