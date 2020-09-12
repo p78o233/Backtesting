@@ -93,4 +93,15 @@ public class ApiUtils {
         }
 
     }
+
+    //    单个查询新浪接口
+    public static Float getStockNowPriceSina(String stockNum) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("list", stockNum);
+        String resultStr = HttpUtils.get("http://hq.sinajs.cn", params);
+        String result[] = resultStr.split(",");
+        if(result.length<4)
+            return 0.0f;
+        return Float.valueOf(result[3]);
+    }
 }

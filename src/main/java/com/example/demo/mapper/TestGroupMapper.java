@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.domain.po.GroupItem;
 import com.example.demo.domain.po.TestGroup;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Service;
@@ -47,4 +48,7 @@ public interface TestGroupMapper {
     int batchDeleteAllGroupItem(@Param("userId")int userId,@Param("ids")List<Integer> ids);
     @Select("select isdefault from testgroup where isdel = 0 and id = #{id}")
     int getIsDefault(@Param("id")int id);
+
+    @Select("select * from groupitem where groupId = #{groupId} and isdel = 0")
+    List<GroupItem> groupItems (@Param("groupId")int groupId);
 }
