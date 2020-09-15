@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface GroupItemService {
 //    获取分组下的回测数据列表
-    public PageInfo<GroupItemVo> getGroupItem(int groupId, int page,int pageSize);
+    public PageInfo<GroupItemVo> getGroupItem(int groupId,int category, int page,int pageSize);
 //    获取分组下的回测数据详细
     public GroupItemVo getGroupDetail(int itemId);
 //    根据股票编号模糊查询股票列表

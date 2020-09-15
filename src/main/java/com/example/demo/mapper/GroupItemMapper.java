@@ -19,6 +19,8 @@ public interface GroupItemMapper {
     int getGroupAllItemCount(@Param("groupId")int groupId);
     @Select("select * from groupitem where groupId = #{groupId} and isdel = 0 order by modifyTime desc limit #{start} , #{pageSize}")
     List<GroupItem> getGroupAllItems(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
+    @Select("select * from groupitem where groupId = #{groupId} and isdel = 0")
+    List<GroupItem> getGroupAllItemsNoPage(@Param("groupId")int groupId);
 //    获取组别item详细
     @Select("select * from groupitem where id = #{id} and isdel = 0")
     GroupItem getGroupItemDetail(@Param("id")int id);
@@ -86,4 +88,7 @@ public interface GroupItemMapper {
 
     @Select("select endPrice from stockrecord where symbol = #{symbol} and recordTime = #{recordTime}")
     Float getEndPrice(@Param("symbol")String symbol,@Param("recordTime") Long recordTime);
+
+    @Select("select endPrice from stockrecord where symbol = #{symbol} and recordTime = #{recordTime}")
+    Float getStockRecordByDay(@Param("symbol")String symbol,@Param("recordTime")Long recordTime);
 }

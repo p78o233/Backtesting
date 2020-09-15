@@ -35,11 +35,15 @@ public class GroupItemServiceImpl implements GroupItemService {
     private String sign;
 
     @Override
-    public PageInfo<GroupItemVo> getGroupItem(int groupId, int page,int pageSize) {
-        int start = (page-1)*pageSize;
-        int count = groupItemMapper.getGroupAllItemCount(groupId);
+    public PageInfo<GroupItemVo> getGroupItem(int groupId, int category,int page,int pageSize) {
+        long startTime = System.currentTimeMillis();
+        int start = (page - 1) * pageSize;
+//        总行数
+        int count = 0;
+        count = groupItemMapper.getGroupAllItemCount(groupId);
         List<GroupItem> groupItems = new ArrayList<>();
-        groupItems = groupItemMapper.getGroupAllItems(groupId,start,pageSize);
+        groupItems = groupItemMapper.getGroupAllItemsNoPage(groupId);
+//        返回的列表
         List<GroupItemVo> groupItemVos = new ArrayList<>();
         for (GroupItem item : groupItems) {
             GroupItemVo vo = new GroupItemVo();
@@ -56,23 +60,67 @@ public class GroupItemServiceImpl implements GroupItemService {
             vo.setModifyTime(item.getModifyTime());
             vo.setUserId(item.getUserId());
             vo.setEndTime(item.getEndTime());
-            float nowPrice = 0.0f;
+            Float nowPrice = 0.0f;
 //            有设置停止时间就查历史记录,没设置就查最新记录
-            if (item.getEndTime() != 0) {
-                nowPrice = ApiUtils.getStockHistoryPrice(item.getEndTime(), item.getSymbol());
-            } else {
-                nowPrice = getStockNowPrice(item.getSymbol());
+            //        检查是否默认分组
+            if(groupItemMapper.getIsDefault(groupId) == 1){
+//            是默认分组
+                if (item.getEndTime() != 0) {
+//                    有限制时间长度
+//                    1  先找数据库数据有没有记录
+//                    2  没有数据就直接返回null
+                    Float recordPrice = groupItemMapper.getStockRecordByDay(item.getSymbol(),item.getEndTime());
+                    if(recordPrice != null){
+                        nowPrice = recordPrice;
+                    }else {
+                        nowPrice = null;
+                    }
+                } else {
+//                    没有限制观察时长查看新浪接口
+                    nowPrice =  ApiUtils.getStockNowPriceSina(item.getSymbol());
+                }
+            }else{
+//            不是默认分组
+                if (item.getEndTime() != 0) {
+//                    有限制时间长度
+//                    1  先找数据库数据有没有记录
+//                    2  没有揭露就去查接口
+                    Float recordPrice = groupItemMapper.getStockRecordByDay(item.getSymbol(),item.getEndTime());
+                    if(recordPrice != null){
+                        nowPrice = recordPrice;
+                    }else {
+                        nowPrice = ApiUtils.getStockHistoryPrice(item.getEndTime(), item.getSymbol());
+                    }
+                } else {
+//                    没有限制观察时长查看新浪接口
+                    nowPrice =  ApiUtils.getStockNowPriceSina(item.getSymbol());
+                }
             }
             vo.setNowPrice(nowPrice);
-            vo.setProfit((nowPrice - item.getBuyPrice()) * item.getBuyNum());
+            if(nowPrice != null) {
+                vo.setProfit((nowPrice - item.getBuyPrice()) * item.getBuyNum());
+            }else{
+                vo.setProfit(0.0f);
+            }
             DecimalFormat decimalFormat = new DecimalFormat("00.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
             if(item.getBuyPrice() != 0.0f) {
-                String p = decimalFormat.format(((nowPrice / item.getBuyPrice()) - 1) * 100);//format 返回的是字符串
+                String p = "";
+                if(nowPrice != null && item.getBuyPrice() != 0 ) {
+                     p = decimalFormat.format(((nowPrice / item.getBuyPrice()) - 1) * 100);//format 返回的是字符串
+                }else{
+                    p = "0.0";
+                }
                 vo.setProfitPencent(p + "%");
             }else{
                 vo.setProfitPencent(0.0 + "%");
             }
-
+            float p = 0.0f;
+            if(nowPrice != null && item.getBuyPrice() != 0 ) {
+                p =((nowPrice / item.getBuyPrice()) - 1) * 100;
+            }else{
+                p = 0.0f;
+            }
+            vo.setProfitPencentNum(p);
 //            检查在回测日期记录内涨跌平数据
             List<StockRecord> list = new ArrayList<>();
             if(item.getEndTime()==0){
@@ -100,38 +148,50 @@ public class GroupItemServiceImpl implements GroupItemService {
             groupItemVos.add(vo);
         }
 
+        //        排序
+        if (category == 1) {
+//            利润从大到小
+            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
+                @Override
+                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
+                    float diff = (vo1.getProfitPencentNum()) - (vo2.getProfitPencentNum());
+                    if (diff > 0) {
+                        return 1;
+                    } else if (diff < 0) {
+                        return -1;
+                    }
+                    return 0; //相等为0
+                }
+            });
+        } else {
+//            利润从小到大
+            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
+                @Override
+                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
+                    float diff = (vo1.getProfitPencentNum()) - (vo2.getProfitPencentNum());
+                    if (diff > 0) {
+                        return -1;
+                    } else if (diff < 0) {
+                        return 1;
+                    }
+                    return 0; //相等为0
+                }
+            });
+        }
+        if(start < groupItemVos.size()) {
+            if (start + pageSize > groupItemVos.size()) {
+                groupItemVos = groupItemVos.subList(start, groupItemVos.size()-1);
+            } else {
+                groupItemVos = groupItemVos.subList(start, start + pageSize);
+            }
+        }else{
+            return null;
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println(endTime - startTime);
         return new PageInfo<GroupItemVo>(count,groupItemVos);
 
-//        排序
-//        if (cate == 1) {
-////            利润从大到小
-//            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
-//                @Override
-//                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
-//                    float diff = (vo1.getNowPrice()/vo1.getBuyNum()) - (vo2.getNowPrice()/vo2.getBuyNum());
-//                    if (diff > 0) {
-//                        return 1;
-//                    } else if (diff < 0) {
-//                        return -1;
-//                    }
-//                    return 0; //相等为0
-//                }
-//            });
-//        } else {
-////            利润从小到大
-//            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
-//                @Override
-//                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
-//                    float diff = (vo1.getNowPrice()/vo1.getBuyNum()) - (vo2.getNowPrice()/vo2.getBuyNum());
-//                    if (diff > 0) {
-//                        return -1;
-//                    } else if (diff < 0) {
-//                        return 1;
-//                    }
-//                    return 0; //相等为0
-//                }
-//            });
-//        }
+
     }
 
     @Override
@@ -298,7 +358,7 @@ public class GroupItemServiceImpl implements GroupItemService {
             for(Integer index : dto.getItemIds()){
 //                获取每个股票的创建时间
                 Date beginTime = groupItemMapper.getStockBySymbol(index);
-                if(dto.getEndTime()<beginTime.getTime()){
+                if(dto.getEndTime()<(beginTime.getTime()/1000)){
 //                    回测时间比创建时间早
                     list.add(index);
                 }
@@ -358,7 +418,7 @@ public class GroupItemServiceImpl implements GroupItemService {
             GroupItem item = new GroupItem();
             item.setBuyTime(dto.getBuyTime());
             item.setBuyNum(dto.getBuyNum());
-            item.setBuyPrice(getStockNowPrice(dto.getSymbol().get(i)));
+            item.setBuyPrice(ApiUtils.getStockNowPriceSina(dto.getSymbol().get(i)));
             item.setSname(groupItemMapper.getSnameSymbol(dto.getSymbol().get(i)));
             item.setSymbol(dto.getSymbol().get(i));
             item.setGroupId(dto.getGroupId());
@@ -376,14 +436,5 @@ public class GroupItemServiceImpl implements GroupItemService {
         return 1;
     }
 
-    //    单个查询
-    public Float getStockNowPrice(String stockNum) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("list", stockNum);
-        String resultStr = HttpUtils.get("http://hq.sinajs.cn", params);
-        String result[] = resultStr.split(",");
-        if(result.length<4)
-            return 0.0f;
-        return Float.valueOf(result[3]);
-    }
+
 }

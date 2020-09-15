@@ -33,11 +33,13 @@ public class GroupItemVo {
     //    回测结束时间，实时的就填0
     private Long endTime;
 //    现价
-    private float nowPrice;
+    private Float nowPrice;
 //    盈亏
     private float profit;
 //    盈亏百分比
     private String profitPencent;
+//    盈亏百分比数字 用于排序
+    private float profitPencentNum;
 //    总天数
     private int totalDays;
 //    涨天数
@@ -51,6 +53,32 @@ public class GroupItemVo {
 
 
     public GroupItemVo() {
+    }
+
+    @Override
+    public String toString() {
+        return "GroupItemVo{" +
+                "id=" + id +
+                ", buyTime=" + buyTime +
+                ", buyNum=" + buyNum +
+                ", buyPrice=" + buyPrice +
+                ", symbol='" + symbol + '\'' +
+                ", sname='" + sname + '\'' +
+                ", groupId=" + groupId +
+                ", isdel=" + isdel +
+                ", createTime=" + createTime +
+                ", modifyTime=" + modifyTime +
+                ", userId=" + userId +
+                ", endTime=" + endTime +
+                ", nowPrice=" + nowPrice +
+                ", profit=" + profit +
+                ", profitPencent='" + profitPencent + '\'' +
+                ", profitPencentNum=" + profitPencentNum +
+                ", totalDays=" + totalDays +
+                ", raiseDays=" + raiseDays +
+                ", dropDays=" + dropDays +
+                ", blanceDays=" + blanceDays +
+                '}';
     }
 
     public Integer getId() {
@@ -149,11 +177,11 @@ public class GroupItemVo {
         this.endTime = endTime;
     }
 
-    public float getNowPrice() {
+    public Float getNowPrice() {
         return nowPrice;
     }
 
-    public void setNowPrice(float nowPrice) {
+    public void setNowPrice(Float nowPrice) {
         this.nowPrice = nowPrice;
     }
 
@@ -171,6 +199,14 @@ public class GroupItemVo {
 
     public void setProfitPencent(String profitPencent) {
         this.profitPencent = profitPencent;
+    }
+
+    public float getProfitPencentNum() {
+        return profitPencentNum;
+    }
+
+    public void setProfitPencentNum(float profitPencentNum) {
+        this.profitPencentNum = profitPencentNum;
     }
 
     public int getTotalDays() {
@@ -205,32 +241,7 @@ public class GroupItemVo {
         this.blanceDays = blanceDays;
     }
 
-    @Override
-    public String toString() {
-        return "GroupItemVo{" +
-                "id=" + id +
-                ", buyTime=" + buyTime +
-                ", buyNum=" + buyNum +
-                ", buyPrice=" + buyPrice +
-                ", symbol='" + symbol + '\'' +
-                ", sname='" + sname + '\'' +
-                ", groupId=" + groupId +
-                ", isdel=" + isdel +
-                ", createTime=" + createTime +
-                ", modifyTime=" + modifyTime +
-                ", userId=" + userId +
-                ", endTime=" + endTime +
-                ", nowPrice=" + nowPrice +
-                ", profit=" + profit +
-                ", profitPencent='" + profitPencent + '\'' +
-                ", totalDays=" + totalDays +
-                ", raiseDays=" + raiseDays +
-                ", dropDays=" + dropDays +
-                ", blanceDays=" + blanceDays +
-                '}';
-    }
-
-    public GroupItemVo(Integer id, Long buyTime, int buyNum, float buyPrice, String symbol, String sname, int groupId, int isdel, Date createTime, Date modifyTime, int userId, Long endTime, float nowPrice, float profit, String profitPencent, int totalDays, int raiseDays, int dropDays, int blanceDays) {
+    public GroupItemVo(Integer id, Long buyTime, int buyNum, float buyPrice, String symbol, String sname, int groupId, int isdel, Date createTime, Date modifyTime, int userId, Long endTime, Float nowPrice, float profit, String profitPencent, float profitPencentNum, int totalDays, int raiseDays, int dropDays, int blanceDays) {
         this.id = id;
         this.buyTime = buyTime;
         this.buyNum = buyNum;
@@ -246,6 +257,7 @@ public class GroupItemVo {
         this.nowPrice = nowPrice;
         this.profit = profit;
         this.profitPencent = profitPencent;
+        this.profitPencentNum = profitPencentNum;
         this.totalDays = totalDays;
         this.raiseDays = raiseDays;
         this.dropDays = dropDays;
