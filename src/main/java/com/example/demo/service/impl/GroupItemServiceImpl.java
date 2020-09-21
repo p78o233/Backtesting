@@ -152,6 +152,7 @@ public class GroupItemServiceImpl implements GroupItemService {
         //        现价排序
         if(cateNowPrice == 1){
 //            升序
+
             Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
                 @Override
                 public int compare(GroupItemVo vo1, GroupItemVo vo2) {
@@ -164,7 +165,7 @@ public class GroupItemServiceImpl implements GroupItemService {
                     return 0; //相等为0
                 }
             });
-        }else{
+        }else if (cateNowPrice == -1){
 //            降序
             Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
                 @Override
