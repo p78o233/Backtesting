@@ -35,7 +35,7 @@ public class GroupItemServiceImpl implements GroupItemService {
     private String sign;
 
     @Override
-    public PageInfo<GroupItemVo> getGroupItem(int groupId, int category,int page,int pageSize) {
+    public PageInfo<GroupItemVo> getGroupItem(int groupId, int category,int cateNowPrice,int page,int pageSize) {
         long startTime = System.currentTimeMillis();
         int start = (page - 1) * pageSize;
 //        总行数
@@ -148,9 +148,41 @@ public class GroupItemServiceImpl implements GroupItemService {
             groupItemVos.add(vo);
         }
 
-        //        排序
+
+        //        现价排序
+        if(cateNowPrice == 1){
+//            升序
+            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
+                @Override
+                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
+                    float diff = (vo1.getNowPrice()) - (vo2.getNowPrice());
+                    if (diff > 0) {
+                        return 1;
+                    } else if (diff < 0) {
+                        return -1;
+                    }
+                    return 0; //相等为0
+                }
+            });
+        }else{
+//            降序
+            Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
+                @Override
+                public int compare(GroupItemVo vo1, GroupItemVo vo2) {
+                    float diff = (vo1.getNowPrice()) - (vo2.getNowPrice());
+                    if (diff > 0) {
+                        return -1;
+                    } else if (diff < 0) {
+                        return 1;
+                    }
+                    return 0; //相等为0
+                }
+            });
+        }
+
+        //        盈亏百分比排序
         if (category == 1) {
-//            利润从大到小
+//            升序
             Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
                 @Override
                 public int compare(GroupItemVo vo1, GroupItemVo vo2) {
@@ -163,8 +195,8 @@ public class GroupItemServiceImpl implements GroupItemService {
                     return 0; //相等为0
                 }
             });
-        } else {
-//            利润从小到大
+        } else if(category == -1) {
+//            降序
             Collections.sort(groupItemVos, new Comparator<GroupItemVo>() {
                 @Override
                 public int compare(GroupItemVo vo1, GroupItemVo vo2) {
@@ -178,6 +210,10 @@ public class GroupItemServiceImpl implements GroupItemService {
                 }
             });
         }
+
+
+
+
         if(start < groupItemVos.size()) {
             if (start + pageSize > groupItemVos.size()) {
                 groupItemVos = groupItemVos.subList(start, groupItemVos.size()-1);
