@@ -47,8 +47,12 @@ public class TestGroupServiceImpl implements TestGroupService {
                     }
                 }
                 DecimalFormat decimalFormat = new DecimalFormat("00.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
-                String p = decimalFormat.format(((sumMarketPrice / sumBuyPrice) - 1) * 100);
-                vo = new TestGroupVo(t.getId(), t.getUserId(), t.getGroupName(), t.getCreateTime(), t.getModifyTime(), t.getIsdel(), t.getIsdefault(), p);
+                if(sumBuyPrice != 0.0f) {
+                    String p = decimalFormat.format(((sumMarketPrice / sumBuyPrice) - 1) * 100);
+                    vo = new TestGroupVo(t.getId(), t.getUserId(), t.getGroupName(), t.getCreateTime(), t.getModifyTime(), t.getIsdel(), t.getIsdefault(), p);
+                }else {
+                    vo = new TestGroupVo(t.getId(), t.getUserId(), t.getGroupName(), t.getCreateTime(), t.getModifyTime(), t.getIsdel(), t.getIsdefault(), "0.00");
+                }
             }
             else{
                 vo = new TestGroupVo(t.getId(), t.getUserId(), t.getGroupName(), t.getCreateTime(), t.getModifyTime(), t.getIsdel(), t.getIsdefault(), "0.00");
