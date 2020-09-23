@@ -14,10 +14,11 @@ import com.example.demo.domain.po.Stock;
 import com.example.demo.domain.vo.GroupItemVo;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public interface GroupItemService {
 //    获取分组下的回测数据列表
-    public PageInfo<GroupItemVo> getGroupItem(int groupId,int category, int cateNowPrice,int page,int pageSize);
+    public PageInfo<GroupItemVo> getGroupItem(int groupId,int category, int cateNowPrice,int page,int pageSize)throws InterruptedException, ExecutionException;
 //    获取分组下的回测数据详细
     public GroupItemVo getGroupDetail(int itemId);
 //    根据股票编号模糊查询股票列表

@@ -14,6 +14,8 @@ import org.apache.poi.hssf.record.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 /*
  * @author p78o2
  * @date 2020/9/1
@@ -58,7 +60,7 @@ public class TestGroupController {
     }
 
     @GetMapping(value = "/getGroupItem")
-    public R getGroupItem(@RequestParam int groupId,@RequestParam int category,@RequestParam int cateNowPrice,@RequestParam int page,@RequestParam int pageSize){
+    public R getGroupItem(@RequestParam int groupId,@RequestParam int category,@RequestParam int cateNowPrice,@RequestParam int page,@RequestParam int pageSize)throws InterruptedException, ExecutionException {
         log.info("分页获取分组内item groupId~"+groupId+"~page:~"+page+"~pageSize~"+pageSize);
         return new R(true,R.REQUEST_SUCCESS,groupItemService.getGroupItem(groupId,category,cateNowPrice,page,pageSize),"查询成功");
     }
