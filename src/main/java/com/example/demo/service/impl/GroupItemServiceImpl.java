@@ -456,6 +456,7 @@ public class GroupItemServiceImpl implements GroupItemService {
             if (list.size() > 0) {
                 return new R(true, R.SOME_ERROR, list, "结束时间不能早于开始时间");
             } else {
+                groupItemMapper.batchEditEndTimeGroupItem(dto.getEndTime(), dto.getItemIds());
                 return new R(true, R.REQUEST_SUCCESS, null, "操作成功");
             }
         }
