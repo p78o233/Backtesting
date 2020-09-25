@@ -3,6 +3,7 @@ package com.example.demo.mapper;
 import com.example.demo.domain.po.GroupItem;
 import com.example.demo.domain.po.Stock;
 import com.example.demo.domain.po.StockRecord;
+import com.example.demo.domain.vo.GroupItemVo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.Date;
@@ -81,14 +82,24 @@ public interface GroupItemMapper {
     Date getStockBySymbol(@Param("id")int id);
 
     @Select("select * from stockrecord where symbol = #{symbol} and recordTime > #{beginTime} and recordTime < #{endTime}")
-    List<StockRecord> getAllStockEndTime(@Param("symbol")String symbol,@Param("beginTime")Long beginTime,@Param("endTime")Long endTime);
+    List<StockRecord> getAllStockEndTime(@Param("symbol")String symbol,@Param("beginTime")Date beginTime,@Param("endTime")Date endTime);
 
     @Select("select * from stockrecord where symbol = #{symbol} and recordTime > #{beginTime}")
-    List<StockRecord> getAllStockEndTimeNone(@Param("symbol")String symbol,@Param("beginTime")Long beginTime);
+    List<StockRecord> getAllStockEndTimeNone(@Param("symbol")String symbol,@Param("beginTime")Date beginTime);
 
     @Select("select endPrice from stockrecord where symbol = #{symbol} and recordTime = #{recordTime}")
     Float getEndPrice(@Param("symbol")String symbol,@Param("recordTime") Long recordTime);
 
     @Select("select endPrice from stockrecord where symbol = #{symbol} and recordTime = #{recordTime}")
     Float getStockRecordByDay(@Param("symbol")String symbol,@Param("recordTime")Long recordTime);
+
+    @Select("select * from defaultitem where groupId = #{groupId} order by profitPencentNum asc limit #{start} ,#{pageSize}")
+    List<GroupItemVo> getListProfitPencentNumASC(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
+    @Select("select * from defaultitem where groupId = #{groupId} order by profitPencentNum desc limit #{start} ,#{pageSize}")
+    List<GroupItemVo> getListProfitPencentNumDESC(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
+
+    @Select("select * from defaultitem where groupId = #{groupId} order by nowPrice asc limit #{start} ,#{pageSize}")
+    List<GroupItemVo> getListNowPriceASC(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
+    @Select("select * from defaultitem where groupId = #{groupId} order by nowPrice desc limit #{start} ,#{pageSize}")
+    List<GroupItemVo> getListNowPriceNumDESC(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
 }

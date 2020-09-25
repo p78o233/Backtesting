@@ -40,6 +40,15 @@ public class TimmerController {
         }
     }
 
+//    默认分组缓存
+    @GetMapping(value = "/defaultItem")
+    @Scheduled(cron = "0 0/30 * * * ?")
+    public void defaultItem(){
+        if(workDay){
+            timerService.defaultItem();
+        }
+    }
+
     @GetMapping(value = "/getWorkDay")
     @Scheduled(cron = "0 0 1 * * ? ")
     public void getWorkDay(){

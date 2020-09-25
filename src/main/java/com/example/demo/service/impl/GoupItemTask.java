@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -120,9 +121,9 @@ public class GoupItemTask implements Callable<GroupItemVo> {
 //            检查在回测日期记录内涨跌平数据
         List<StockRecord> list = new ArrayList<>();
         if(item.getEndTime()==0){
-            list = groupItemMapper.getAllStockEndTimeNone(item.getSymbol(),item.getBuyTime());
+            list = groupItemMapper.getAllStockEndTimeNone(item.getSymbol(),new Date(item.getBuyTime()*1000));
         }else{
-            list = groupItemMapper.getAllStockEndTime(item.getSymbol(),item.getBuyTime(),item.getEndTime());
+            list = groupItemMapper.getAllStockEndTime(item.getSymbol(),new Date(item.getBuyTime()*1000),new Date(item.getEndTime()*1000));
         }
         int raiseDays = 0;
         int dropDays = 0;

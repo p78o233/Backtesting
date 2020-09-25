@@ -9,4 +9,6 @@ public interface TimerService {
     public void insertStock();
 //    每天获取股票收盘记录
     public void getDailyRecord();
+//    定时任务默认分组缓存
+    public void defaultItem();
 }

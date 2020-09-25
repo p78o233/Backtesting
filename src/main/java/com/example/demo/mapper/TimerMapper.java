@@ -3,6 +3,8 @@ package com.example.demo.mapper;
 import com.example.demo.domain.po.Stock;
 import com.example.demo.domain.po.StockRecord;
 import com.example.demo.domain.po.TestGroup;
+import com.example.demo.domain.po.User;
+import com.example.demo.domain.vo.GroupItemVo;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -49,4 +51,24 @@ public interface TimerMapper {
     int getGroupIdByUserId(@Param("userId")int userId);
     @Select("select * from stock where symbol not in (select symbol from groupitem where groupId = #{groupId} and userId = #{userId})")
     List<Stock> getNoneExitStock(@Param("groupId")int groupId,@Param("userId")int userId);
+
+//    获取全部用户的默认分组的id
+    @Select("select id from testgroup where isdel = 0 and isdefault = 1 and userId in (select id from user where isdel = 0)")
+    List<Integer> getGroupIds();
+//    批量插入缓存
+    @Insert({
+            "<script>",
+            "insert into defaultitem (id,buyTime,buyNum,buyPrice,symbol,sname,groupId,isdel,createTime,modifyTime,userId,endTime,nowPrice,profit,profitPencent,profitPencentNum,totalDays,raiseDays,dropDays,blanceDays) values ",
+            "<foreach collection='testLists' item='item' index='index' separator=','>",
+            "(#{item.id}, #{item.buyTime},#{item.buyNum}, #{item.buyPrice},#{item.symbol}, #{item.sname}, #{item.groupId},#{item.isdel}, #{item.createTime}, #{item.modifyTime},#{item.userId}" +
+                    ", #{item.endTime}, #{item.nowPrice},#{item.profit}" +
+                    ", #{item.profitPencent}, #{item.profitPencentNum},#{item.totalDays}" +
+                    ", #{item.raiseDays}, #{item.dropDays},#{item.blanceDays})",
+            "</foreach>",
+            "</script>"
+    })
+    int insertDefaultItem(@Param("testLists") List<GroupItemVo> groupItemVos );
+
+    @Delete("delete from defaultitem")
+    int deleteDefaultItem();
 }
