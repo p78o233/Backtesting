@@ -110,8 +110,7 @@ public class TimerServiceImpl implements TimerService {
     public void defaultItem() {
         List<Integer> groupIds = new ArrayList<>();
         groupIds = timerMapper.getGroupIds();
-//        操作前删除全部数据
-        timerMapper.deleteDefaultItem();
+        List<GroupItemVo> groupItemVosInsert = new ArrayList<GroupItemVo>();
         for (Integer groupId : groupIds) {
             List<GroupItem> groupItems = new ArrayList<>();
             groupItems = groupItemMapper.getGroupAllItemsNoPage(groupId);
@@ -219,14 +218,15 @@ public class TimerServiceImpl implements TimerService {
 
                 groupItemVos.add(vo);
             }
-//            批量插入defaultitem
-            try {
-                timerMapper.insertDefaultItem(groupItemVos);
-            }catch (Exception e){
-                e.printStackTrace();
-                continue;
-            }
-
+            groupItemVosInsert.addAll(groupItemVos);
+        }
+        //        操作前删除全部数据
+        timerMapper.deleteDefaultItem();
+        //            批量插入defaultitem
+        try {
+            timerMapper.insertDefaultItem(groupItemVosInsert);
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

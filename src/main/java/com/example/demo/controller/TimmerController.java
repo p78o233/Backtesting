@@ -42,7 +42,7 @@ public class TimmerController {
 
 //    默认分组缓存
     @GetMapping(value = "/defaultItem")
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0 0/1 * * ? ")
     public void defaultItem(){
         if(workDay){
             timerService.defaultItem();
