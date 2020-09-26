@@ -102,4 +102,7 @@ public interface GroupItemMapper {
     List<GroupItemVo> getListNowPriceASC(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
     @Select("select * from defaultitem where groupId = #{groupId} order by nowPrice desc limit #{start} ,#{pageSize}")
     List<GroupItemVo> getListNowPriceNumDESC(@Param("groupId")int groupId,@Param("start")int start,@Param("pageSize")int pageSize);
+
+    @Select("select count(*) from defaultitem where groupId = #{groupId}")
+    int getdefaultItemCount(@Param("groupId")int groupId);
 }

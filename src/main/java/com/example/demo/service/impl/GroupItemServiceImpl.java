@@ -41,10 +41,11 @@ public class GroupItemServiceImpl implements GroupItemService {
         int start = (page - 1) * pageSize;
 //        总行数
         int count = 0;
-        count = groupItemMapper.getGroupAllItemCount(groupId);
+
 //        检查是否默认分组
         if(groupItemMapper.getIsDefault(groupId) == 1){
 //            是默认分组就就查询defaultitem
+            count = groupItemMapper.getdefaultItemCount(groupId);
             List<GroupItemVo> resultList = new ArrayList<>();
             if(cateNowPrice == 1){
                 resultList = groupItemMapper.getListNowPriceASC(groupId,start,pageSize);
@@ -62,7 +63,7 @@ public class GroupItemServiceImpl implements GroupItemService {
 
 
 
-
+        count = groupItemMapper.getGroupAllItemCount(groupId);
         List<GroupItem> groupItems = new ArrayList<>();
         groupItems = groupItemMapper.getGroupAllItemsNoPage(groupId);
 //        返回的列表
