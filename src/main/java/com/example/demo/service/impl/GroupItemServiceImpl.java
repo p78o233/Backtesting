@@ -55,7 +55,7 @@ public class GroupItemServiceImpl implements GroupItemService {
 
             if(category == 1){
                 resultList = groupItemMapper.getListProfitPencentNumASC(groupId,start,pageSize);
-            }else if(category == -1){
+            }else if(category == -1 || category == 0){
                 resultList = groupItemMapper.getListProfitPencentNumDESC(groupId,start,pageSize);
             }
             return new PageInfo<GroupItemVo>(count, resultList);
