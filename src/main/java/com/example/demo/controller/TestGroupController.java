@@ -73,7 +73,7 @@ public class TestGroupController {
 
     @GetMapping(value = "/getStockSearch")
     public R getStockSearch(@RequestParam String stockNum){
-        log.info("根据股票编号模糊查询股票信息 stockNum~"+stockNum);
+        log.info("根据股票编号或股票名称模糊查询股票信息 stockNum~"+stockNum);
         return new R(true,R.REQUEST_SUCCESS,groupItemService.getStockSearch(stockNum),"查询成功");
     }
 

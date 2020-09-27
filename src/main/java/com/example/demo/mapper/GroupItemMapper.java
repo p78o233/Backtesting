@@ -26,7 +26,7 @@ public interface GroupItemMapper {
     @Select("select * from groupitem where id = #{id} and isdel = 0")
     GroupItem getGroupItemDetail(@Param("id")int id);
 //    根据股票编号模糊查询
-    @Select("select * from stock where symbol like '%${symbol}%' order by id asc limit 0 , 20")
+    @Select("select * from stock where symbol like '%${symbol}%' or sname like '%${symbol}%' order by id asc limit 0 , 20")
     List<Stock> getStockSearch (@Param("symbol")String symbol);
 
 //    新增修改
