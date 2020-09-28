@@ -71,4 +71,14 @@ public interface TimerMapper {
 
     @Delete("delete from defaultitem")
     int deleteDefaultItem();
+
+//    删除所有的基金信息
+    @Delete("delete from defaultitem where symbol like 'sh5%' or symbol like 'sz18' or symbol like 'sz15' or symbol like 'sz16'")
+    int deleteSymbolDefaultItem();
+    @Delete("delete from groupitem where symbol like 'sh5%' or symbol like 'sz18' or symbol like 'sz15' or symbol like 'sz16'")
+    int deleteSymbolGroupItem();
+    @Delete("delete from stock where symbol like 'sh5%' or symbol like 'sz18' or symbol like 'sz15' or symbol like 'sz16'")
+    int deleteSymbolStock();
+    @Delete("delete from stockrecord where symbol like 'sh5%' or symbol like 'sz18' or symbol like 'sz15' or symbol like 'sz16'")
+    int deleteSymbolStockRecord();
 }

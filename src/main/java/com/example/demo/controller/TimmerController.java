@@ -22,36 +22,43 @@ public class TimmerController {
     private TimerService timerService;
 
     private boolean workDay = true;
-//    每日获取股票列表
+
+    //    每日获取股票列表
     @GetMapping(value = "/insertStock")
-    @Scheduled(cron = "0 0 6 * * ? ")
-    public void insertStock(){
+    @Scheduled(cron = "0 0 2 * * ? ")
+    public void insertStock() {
         if (workDay) {
             timerService.insertStock();
         }
     }
 
-//    每日获取收盘价格
+    //    删除全部基金数据
+    @GetMapping(value = "/deleteFund")
+    public void deleteFund() {
+        timerService.deleteFund();
+    }
+
+    //    每日获取收盘价格
     @GetMapping(value = "/getDailyRecord")
     @Scheduled(cron = "0 5 15 * * ? ")
-    public void getDailyRecord(){
-        if(workDay) {
+    public void getDailyRecord() {
+        if (workDay) {
             timerService.getDailyRecord();
         }
     }
 
-//    默认分组缓存
+    //    默认分组缓存，9到15点才执行
     @GetMapping(value = "/defaultItem")
-    @Scheduled(cron = "0 0 0/1 * * ? ")
-    public void defaultItem(){
-        if(workDay){
+    @Scheduled(cron = "0 0 9,10,11,12,13,14,15 * * ? ")
+    public void defaultItem() {
+        if (workDay) {
             timerService.defaultItem();
         }
     }
 
     @GetMapping(value = "/getWorkDay")
     @Scheduled(cron = "0 0 1 * * ? ")
-    public void getWorkDay(){
+    public void getWorkDay() {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String beginDateStr = format.format(new Date().getTime());
         this.setWorkDay(ApiUtils.getWorkDay(beginDateStr));

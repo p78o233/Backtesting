@@ -7,6 +7,8 @@ package com.example.demo.service;
 public interface TimerService {
 //    每天拉取股票列表
     public void insertStock();
+//    删除基金数据
+    public void deleteFund();
 //    每天获取股票收盘记录
     public void getDailyRecord();
 //    定时任务默认分组缓存

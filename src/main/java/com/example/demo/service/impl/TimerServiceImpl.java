@@ -56,6 +56,8 @@ public class TimerServiceImpl implements TimerService {
             e.printStackTrace();
         }
 
+//        删除全部基金数据
+        deleteFund();
 //        获取全部人的默认分组id
         List<Integer> allUserIdList = new ArrayList<>();
         allUserIdList = timerMapper.getAllUserId();
@@ -65,6 +67,14 @@ public class TimerServiceImpl implements TimerService {
             stockList = timerMapper.getNoneExitStock(groupId, allUserIdList.get(i));
             asyncTack.batchLongTimeStocks(allUserIdList.get(i), groupId, stockList);
         }
+    }
+
+    @Override
+    public void deleteFund() {
+        timerMapper.deleteSymbolDefaultItem();
+        timerMapper.deleteSymbolGroupItem();
+        timerMapper.deleteSymbolStock();
+        timerMapper.deleteSymbolStockRecord();
     }
 
     @Override
