@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface TestGroupMapper {
 //    获取全部分组
-    @Select("select * from testgroup where isdel = 0 and userId = #{userId} order by isdefault asc")
+    @Select("select * from testgroup where isdel = 0 and userId = #{userId} order by isdefault asc,createTime desc")
     List<TestGroup> getAllTestGroup(@Param("userId")int userId);
 
 //    检查自己是否有同名的回测分组
