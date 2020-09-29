@@ -32,14 +32,14 @@ public interface TestGroupMapper {
     int updateTestGroup(@Param("t")TestGroup testGroup);
 
 //    批量删除回测分组
-    @Update("<script>" +"update testgroup set isdel = 1 and userId = #{userId}"+
+    @Update("<script>" +"update testgroup set isdel = 1 where userId = #{userId}"+
             " and id in "+
             "<foreach collection='ids' item='id' open='(' separator=',' close=')'>"+
             "#{id}"+
             "</foreach>"+
             "</script>")
     int batchDeleteTestGroup(@Param("userId")int userId,@Param("ids")List<Integer> ids);
-    @Update("<script>" +"update groupitem set isdel = 1 and userId = #{userId}"+
+    @Update("<script>" +"update groupitem set isdel = 1 where userId = #{userId}"+
             " and groupId in "+
             "<foreach collection='ids' item='id' open='(' separator=',' close=')'>"+
             "#{id}"+
