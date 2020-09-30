@@ -245,14 +245,10 @@ public class GroupItemServiceImpl implements GroupItemService {
             });
         }
 
-        if(groupItemMapper.getIsDefault(groupId) == 1){
-//            默认分组不分页直接返回了
-            return new PageInfo<GroupItemVo>(count, groupItemVos);
-        }
 
         if (start < groupItemVos.size()) {
             if (start + pageSize > groupItemVos.size()) {
-                groupItemVos = groupItemVos.subList(start, groupItemVos.size() - 1);
+                groupItemVos = groupItemVos.subList(start, groupItemVos.size());
             } else {
                 groupItemVos = groupItemVos.subList(start, start + pageSize);
             }
