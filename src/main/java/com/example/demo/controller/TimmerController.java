@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /*
@@ -21,13 +22,16 @@ public class TimmerController {
     @Autowired
     private TimerService timerService;
 
+//    是否工作日
     private boolean workDay = true;
+//    是否周一至周五
+    private boolean dayWeek = true;
 
     //    每日获取股票列表
     @GetMapping(value = "/insertStock")
     @Scheduled(cron = "0 0 2 * * ? ")
     public void insertStock() {
-        if (workDay) {
+        if (workDay && dayWeek) {
             timerService.insertStock();
         }
     }
@@ -42,7 +46,7 @@ public class TimmerController {
     @GetMapping(value = "/getDailyRecord")
     @Scheduled(cron = "0 5 15 * * ? ")
     public void getDailyRecord() {
-        if (workDay) {
+        if (workDay && dayWeek) {
             timerService.getDailyRecord();
         }
     }
@@ -51,7 +55,7 @@ public class TimmerController {
     @GetMapping(value = "/defaultItem")
     @Scheduled(cron = "0 0 9,10,11,12,13,14,15 * * ? ")
     public void defaultItem() {
-        if (workDay) {
+        if (workDay && dayWeek) {
             timerService.defaultItem();
         }
     }
@@ -62,6 +66,32 @@ public class TimmerController {
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String beginDateStr = format.format(new Date().getTime());
         this.setWorkDay(ApiUtils.getWorkDay(beginDateStr));
+    }
+
+    @GetMapping(value = "/dayWeek")
+    @Scheduled(cron = "0 0 1 * * ? ")
+    public void dayWeek(){
+        Calendar calendar=Calendar.getInstance();
+        if(calendar.get(Calendar.DAY_OF_WEEK)-1 < 6){
+            this.setDayWeek(true);
+        }else{
+            this.setDayWeek(false);
+        }
+    }
+
+    @GetMapping(value = "/getNowState")
+    public boolean getNowState(){
+        if(this.workDay && this.dayWeek)
+            return true;
+        return false;
+    }
+
+    public boolean isDayWeek() {
+        return dayWeek;
+    }
+
+    public void setDayWeek(boolean dayWeek) {
+        this.dayWeek = dayWeek;
     }
 
     public TimerService getTimerService() {
