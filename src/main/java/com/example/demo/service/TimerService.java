@@ -13,4 +13,5 @@ public interface TimerService {
     public void getDailyRecord();
 //    定时任务默认分组缓存
     public void defaultItem();
+
 }

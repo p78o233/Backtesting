@@ -86,6 +86,8 @@ public class TimmerController {
         return false;
     }
 
+
+
     public boolean isDayWeek() {
         return dayWeek;
     }
